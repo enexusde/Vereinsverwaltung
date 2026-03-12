@@ -24,7 +24,7 @@ jobs:
 
     - name: Projekt bauen
       run: |
-        lazbuild Vereinsverwlatung.lpi
+        lazbuild Vereinsverwaltung.lpi
 
     - name: Build Artefakt hochladen
       uses: actions/upload-artifact@v4
