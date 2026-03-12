@@ -21,4 +21,4 @@ jobs:
 
     - name: Projekt bauen
       run: |
-        lazbuild path/to/your_project.lpi
+        lazbuild Vereinsverwaltung.lpi
