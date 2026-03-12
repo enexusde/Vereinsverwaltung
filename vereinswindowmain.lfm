@@ -1,0 +1,1198 @@
+object Form1: TForm1
+  Left = 226
+  Height = 900
+  Top = 331
+  Width = 800
+  Caption = 'Vereinsverwaltung 1.0'
+  ClientHeight = 900
+  ClientWidth = 800
+  Constraints.MaxHeight = 900
+  Constraints.MaxWidth = 1200
+  Constraints.MinHeight = 400
+  Constraints.MinWidth = 800
+  Icon.Data = {
+    7E04000000000100010010100000010020006804000016000000280000001000
+    0000200000000100200000000000000400006400000064000000000000000000
+    0000FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+    FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+    FF00FFFFFF006B6B6BFF6B6B6BFF6B6B6BFF6B6B6BFF6B6B6BFF6B6B6BFF6B6B
+    6BFF6B6B6BFF6B6B6BFF6B6B6BFF6A6C6AFF59795AFF5F7360FF676D67FFFFFF
+    FF00FFFFFF0063C06E7761BC6BFE60B66AFF6EB075FF8FA792FF878E87FFBCBC
+    BCFFBDBDBDFF8D8D8DFF829A83FF549658FF65AD6DFF408E44F83F8B42B1FFFF
+    FF00FFFFFF0066C4710E67C272FF87CB8FFF78C380FFD9D9D9FF898989FFB9B9
+    B9FFB9B9B9FF8B8B8BFFCBD1CCFF4E9E54FF79BB7FFF449248DE418F452DFFFF
+    FF00FFFFFF00FFFFFF0066C5724173C67CFFC1DFC5FFDBDBDBFF858585FFB5B5
+    B5FFB7B7B7FF8A8A8AFFD5D5D5FFCADBCBFF5AA760FF47984C52FFFFFF00FFFF
+    FF00FFFFFF00FFFFFF0068C7742070C17AFFEEEEEEFFDCDCDCFF818181FF8383
+    83FF848484FF868686FFD7D7D7FFDBE4DCFF549C5AFFFFFFFF00FFFFFF00FFFF
+    FF00FFFFFF00FFFFFF00FFFFFF00A4B1A5FFEFEFEFFFDEDEDEFFDDDDDDFFDCDC
+    DCFFDBDBDBFFDADADAFFD9D9D9FFEBEBEBFF778378FFFFFFFF00FFFFFF00FFFF
+    FF00FFFFFF00FFFFFF00FFFFFF00B4B4B4FFF0F0F0FFF3C1A2FFF2C09FFFF2BE
+    9BFFF2BB99FFF2BA96FFF1B895FFECECECFF848484FFFFFFFF00FFFFFF00FFFF
+    FF00FFFFFF00FFFFFF00FFFFFF00BBBBBBFFF1F1F1FFE1E1E1FFE0E0E0FFDFDF
+    DFFFDEDEDEFFDDDDDDFFDCDCDCFFEDEDEDFF8C8C8CFFFFFFFF00FFFFFF00FFFF
+    FF00FFFFFF00FFFFFF00FFFFFF00C1C1C1FFF1F1F1FFF5C8ACFFF3C7AAFFF3C5
+    A6FFF3C3A3FFF3C09FFFF2BE9DFFEEEEEEFF939393FFFFFFFF00FFFFFF00FFFF
+    FF00FFFFFF00FFFFFF00FFFFFF00C7C7C7FFF2F2F2FFE4E4E4FFE3E3E3FFE2E2
+    E2FFE1E1E1FFE0E0E0FFDFDFDFFFEFEFEFFF9B9B9BFFFFFFFF00FFFFFF00FFFF
+    FF00FFFFFF00FFFFFF00FFFFFF00CDCDCDFFF3F3F3FFF5CCB2FFF5CCB2FFF5CB
+    AFFFF5C9ACFFF3C8AAFFF3C5A7FFEFEFEFFFA2A2A2FFFFFFFF00FFFFFF00FFFF
+    FF00FFFFFF00FFFFFF00FFFFFF00D1D1D1FFF3F3F3FFF3F3F3FFF2F2F2FFF2F2
+    F2FFF2F2F2FFF1F1F1FFF1F1F1FFF0F0F0FFA9A9A9FFFFFFFF00FFFFFF00FFFF
+    FF00FFFFFF00FFFFFF00FFFFFF00D6D6D6FFD3D3D3FFCFCFCFFFCCCCCCFFC8C8
+    C8FFC4C4C4FFAFAFAFFF747474FF8E8E8EFFB1B1B1FFFFFFFF00FFFFFF00FFFF
+    FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+    FF00FFFFFF00FFFFFF009A9A9AFFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+    FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+    FF00FFFFFF00FFFFFF003939E7FFFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+    FF00000000000000000000000000000000000000000000000000000000000000
+    0000000000000000000000000000000000000000000000000000000000000000
+    0000
+  }
+  LCLVersion = '4.6.0.0'
+  OnActivate = FormActivate
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  OnResize = FormResize
+  object PageControl1: TPageControl
+    Left = 8
+    Height = 850
+    Top = 40
+    Width = 784
+    ActivePage = statisticSheet
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    Images = tabimages
+    TabIndex = 3
+    TabOrder = 0
+    object cashSheet: TTabSheet
+      Caption = 'Barkasse'
+      ClientHeight = 822
+      ClientWidth = 776
+      ImageIndex = 0
+      object cashList: TListView
+        Left = 8
+        Height = 568
+        Top = 8
+        Width = 758
+        Anchors = [akTop, akLeft, akRight, akBottom]
+        Columns = <        
+          item
+            Caption = 'Kasse davor'
+            MaxWidth = 200
+            MinWidth = 75
+            Width = 77
+          end        
+          item
+            Caption = 'Änderung'
+            MaxWidth = 200
+            MinWidth = 70
+            Width = 70
+          end        
+          item
+            Caption = 'Kasse danach'
+            MaxWidth = 200
+            MinWidth = 90
+            Width = 90
+          end        
+          item
+            Caption = 'Vorgangsnummer'
+            MaxWidth = 200
+            MinWidth = 120
+            Width = 120
+          end        
+          item
+            Caption = 'Kategorie'
+            MaxWidth = 200
+            MinWidth = 80
+            Width = 80
+          end        
+          item
+            Caption = 'Gegenstand'
+            MaxWidth = 200
+            MinWidth = 80
+            Width = 80
+          end        
+          item
+            Caption = 'Gegenkasse'
+            MaxWidth = 200
+            MinWidth = 80
+            Width = 80
+          end        
+          item
+            Caption = 'Kurzbeschreibung'
+            MaxWidth = 400
+            MinWidth = 120
+            Width = 120
+          end        
+          item
+            Caption = 'Datum'
+            MaxWidth = 200
+            MinWidth = 130
+            Width = 130
+          end>
+        ColumnClick = False
+        GridLines = True
+        HideSelection = False
+        PopupMenu = cashContextMenu
+        ReadOnly = True
+        RowSelect = True
+        TabOrder = 0
+        ViewStyle = vsReport
+        OnChange = cashListChange
+        OnSelectItem = selectCashMove
+      end
+      object cashChangeCent: TLabeledEdit
+        Left = 8
+        Height = 23
+        Top = 600
+        Width = 64
+        Anchors = [akLeft, akBottom]
+        EditLabel.Height = 15
+        EditLabel.Width = 64
+        EditLabel.Caption = 'Änderung:'
+        TabOrder = 1
+        Text = '0,00'
+        OnChange = cashChangeCentChange
+      end
+      object cashMoveNo: TLabeledEdit
+        Left = 80
+        Height = 23
+        Top = 600
+        Width = 112
+        Anchors = [akLeft, akBottom]
+        EditLabel.Height = 15
+        EditLabel.Width = 112
+        EditLabel.Caption = 'Vorgangsnummer:'
+        TabOrder = 2
+        OnChange = cashMoveNoChange
+      end
+      object cashCategory: TLabeledEdit
+        Left = 8
+        Height = 23
+        Top = 649
+        Width = 80
+        Anchors = [akLeft, akBottom]
+        EditLabel.Height = 15
+        EditLabel.Width = 80
+        EditLabel.Caption = 'Kategorie:'
+        TabOrder = 3
+        OnChange = cashCategoryChange
+      end
+      object cashSubject: TLabeledEdit
+        Left = 96
+        Height = 23
+        Top = 649
+        Width = 96
+        Anchors = [akLeft, akBottom]
+        EditLabel.Height = 15
+        EditLabel.Width = 96
+        EditLabel.Caption = 'Gegenstand:'
+        TabOrder = 4
+        OnChange = cashSubjectChange
+      end
+      object cashRecipient: TLabeledEdit
+        Left = 8
+        Height = 23
+        Top = 697
+        Width = 184
+        Anchors = [akLeft, akBottom]
+        EditLabel.Height = 15
+        EditLabel.Width = 184
+        EditLabel.Caption = 'Gegenkasse:'
+        TabOrder = 5
+        OnChange = cashRecipientChange
+      end
+      object cashDate: TLabeledEdit
+        Left = 8
+        Height = 23
+        Top = 745
+        Width = 112
+        Anchors = [akLeft, akBottom]
+        EditLabel.Height = 15
+        EditLabel.Width = 112
+        EditLabel.Caption = 'Datum'
+        TabOrder = 6
+        OnChange = cashDateChange
+      end
+      object cashCommentLabel: TLabel
+        Left = 200
+        Height = 15
+        Top = 584
+        Width = 66
+        Anchors = [akLeft, akBottom]
+        Caption = 'Kommentar:'
+      end
+      object cashDescription: TMemo
+        Left = 200
+        Height = 216
+        Top = 600
+        Width = 318
+        Anchors = [akLeft, akRight, akBottom]
+        TabOrder = 7
+        OnChange = cashDescriptionChange
+      end
+      object cashShortDescription: TLabeledEdit
+        Left = 8
+        Height = 23
+        Top = 793
+        Width = 184
+        Anchors = [akLeft, akBottom]
+        EditLabel.Height = 15
+        EditLabel.Width = 184
+        EditLabel.Caption = 'Kurzbeschreibung'
+        TabOrder = 8
+        OnChange = cashShortDescriptionChange
+      end
+      object Label1: TLabel
+        Left = 528
+        Height = 15
+        Top = 584
+        Width = 41
+        Anchors = [akRight, akBottom]
+        Caption = 'Historie'
+      end
+      object cashHistory: TListBox
+        Left = 528
+        Height = 213
+        Top = 601
+        Width = 238
+        Anchors = [akRight, akBottom]
+        ItemHeight = 0
+        TabOrder = 9
+      end
+      object cashChecked: TCheckBox
+        Left = 131
+        Height = 19
+        Top = 744
+        Width = 61
+        Anchors = [akLeft, akBottom]
+        Caption = 'Geprüft:'
+        TabOrder = 10
+        OnChange = cashCheckedChange
+      end
+    end
+    object bankSheet: TTabSheet
+      Caption = 'Bankkonto'
+      ClientHeight = 822
+      ClientWidth = 776
+      ImageIndex = 1
+      object bankAccountMovements: TListView
+        Left = 8
+        Height = 664
+        Top = 8
+        Width = 758
+        Anchors = [akTop, akLeft, akRight, akBottom]
+        Columns = <        
+          item
+            Alignment = taRightJustify
+            Caption = 'Kontostand davor'
+            MaxWidth = 300
+            MinWidth = 120
+            Width = 120
+          end        
+          item
+            Alignment = taRightJustify
+            Caption = 'Wertänderung'
+            MaxWidth = 200
+            MinWidth = 100
+            Width = 100
+          end        
+          item
+            Caption = 'Kontostand danach'
+            MaxWidth = 200
+            MinWidth = 120
+            Width = 120
+          end        
+          item
+            Caption = 'Vorgangsnummer'
+            MaxWidth = 200
+            MinWidth = 120
+            Width = 120
+          end        
+          item
+            Caption = 'Kurzbeschreibung'
+            MaxWidth = 400
+            MinWidth = 120
+            Width = 160
+          end        
+          item
+            Caption = 'Gegenkonto'
+            MaxWidth = 400
+            MinWidth = 90
+            Width = 120
+          end        
+          item
+            Caption = 'Ausführungsdatum'
+            MaxWidth = 200
+            MinWidth = 130
+            Width = 130
+          end>
+        ColumnClick = False
+        GridLines = True
+        HideSelection = False
+        IconOptions.AutoArrange = True
+        IconOptions.WrapText = False
+        PopupMenu = bankContextMenu
+        ReadOnly = True
+        RowSelect = True
+        TabOrder = 0
+        ViewStyle = vsReport
+        OnSelectItem = bankAccountMovementsSelectItem
+      end
+      object bankDesc: TLabeledEdit
+        Left = 8
+        Height = 23
+        Top = 696
+        Width = 328
+        Anchors = [akLeft, akBottom]
+        EditLabel.Height = 15
+        EditLabel.Width = 328
+        EditLabel.Caption = 'Kurzbeschreibung:'
+        TabOrder = 1
+        OnChange = bankDescChange
+      end
+      object bankChange: TLabeledEdit
+        Left = 8
+        Height = 23
+        Top = 741
+        Width = 80
+        Anchors = [akLeft, akBottom]
+        EditLabel.Height = 15
+        EditLabel.Width = 80
+        EditLabel.Caption = 'Änderung:'
+        TabOrder = 2
+        OnChange = bankChangeChange
+      end
+      object bankRecipient: TLabeledEdit
+        Left = 96
+        Height = 23
+        Top = 741
+        Width = 240
+        Anchors = [akLeft, akBottom]
+        EditLabel.Height = 15
+        EditLabel.Width = 240
+        EditLabel.Caption = 'Gegenkonto:'
+        TabOrder = 3
+        OnChange = bankRecipientChange
+      end
+      object bankMovementNo: TLabeledEdit
+        Left = 136
+        Height = 23
+        Top = 790
+        Width = 124
+        Anchors = [akLeft, akBottom]
+        EditLabel.Height = 15
+        EditLabel.Width = 124
+        EditLabel.Caption = 'Vorgangsnummer'
+        TabOrder = 4
+        OnChange = bankMovementNoChange
+      end
+      object bankChecked: TCheckBox
+        Left = 272
+        Height = 19
+        Top = 790
+        Width = 58
+        Anchors = [akLeft, akBottom]
+        Caption = 'Geprüft'
+        TabOrder = 5
+        OnChange = bankCheckedChange
+      end
+      object bankCommentLabel: TLabel
+        Left = 344
+        Height = 15
+        Top = 680
+        Width = 66
+        Anchors = [akLeft, akBottom]
+        Caption = 'Kommentar:'
+      end
+      object bankComment: TMemo
+        Left = 344
+        Height = 117
+        Top = 696
+        Width = 422
+        Anchors = [akLeft, akRight, akBottom]
+        TabOrder = 6
+        OnChange = bankCommentChange
+      end
+      object bankExecutionDate: TLabeledEdit
+        Left = 8
+        Height = 23
+        Top = 790
+        Width = 118
+        Anchors = [akLeft, akBottom]
+        EditLabel.Height = 15
+        EditLabel.Width = 118
+        EditLabel.Caption = 'Ausführungsdatum:'
+        TabOrder = 7
+        OnChange = bankExecutionDateChange
+      end
+    end
+    object TabSheet3: TTabSheet
+      Caption = 'Mitglieder'
+      ClientHeight = 822
+      ClientWidth = 776
+      ImageIndex = 2
+      object members: TListView
+        Left = 8
+        Height = 592
+        Top = 8
+        Width = 763
+        Anchors = [akTop, akLeft, akRight, akBottom]
+        Columns = <        
+          item
+            Caption = 'Mitgliedsnummer'
+            MaxWidth = 200
+            MinWidth = 100
+            Width = 110
+          end        
+          item
+            Alignment = taRightJustify
+            Caption = 'Kontostand'
+            MaxWidth = 200
+            MinWidth = 100
+            Width = 100
+          end        
+          item
+            Alignment = taRightJustify
+            Caption = 'Zahlungsverzug'
+            MaxWidth = 200
+            MinWidth = 100
+            Width = 100
+          end        
+          item
+            Caption = 'Letzter Kontakt'
+            MaxWidth = 200
+            MinWidth = 50
+            Width = 94
+          end        
+          item
+            Caption = 'Kontaktstatus'
+            MaxWidth = 200
+            MinWidth = 20
+            Width = 100
+          end        
+          item
+            Caption = 'Kontaktperson (Nr.)'
+            MaxWidth = 200
+            MinWidth = 40
+            Width = 100
+          end        
+          item
+            Caption = 'Beitragssatz'
+            MaxWidth = 200
+            MinWidth = 80
+            Width = 80
+          end>
+        ColumnClick = False
+        GridLines = True
+        HideSelection = False
+        PopupMenu = memberContextMenu
+        ReadOnly = True
+        RowSelect = True
+        TabOrder = 0
+        ViewStyle = vsReport
+        OnSelectItem = updateMemberForm
+      end
+      object memberno: TLabeledEdit
+        Left = 10
+        Height = 23
+        Top = 625
+        Width = 142
+        EditLabel.Height = 15
+        EditLabel.Width = 142
+        EditLabel.Caption = 'Nummer:'
+        TabOrder = 1
+        OnChange = memberChangeNumber
+      end
+      object membershipfee: TLabeledEdit
+        Left = 10
+        Height = 23
+        Top = 671
+        Width = 142
+        EditLabel.Height = 15
+        EditLabel.Width = 142
+        EditLabel.Caption = 'Beitragshöhe:'
+        TabOrder = 2
+        OnChange = membershipfeeChange
+      end
+      object memberLastContact: TLabeledEdit
+        Left = 10
+        Height = 23
+        Top = 713
+        Width = 142
+        EditLabel.Height = 15
+        EditLabel.Width = 142
+        EditLabel.Caption = 'Letzter Kontakt:'
+        TabOrder = 3
+        OnChange = memberLastContactChange
+      end
+      object memberContactState: TCheckGroup
+        Left = 160
+        Height = 207
+        Top = 608
+        Width = 324
+        AutoFill = True
+        Caption = 'Kontaktstatus'
+        ChildSizing.LeftRightSpacing = 6
+        ChildSizing.TopBottomSpacing = 6
+        ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+        ChildSizing.EnlargeVertical = crsHomogenousChildResize
+        ChildSizing.ShrinkHorizontal = crsScaleChilds
+        ChildSizing.ShrinkVertical = crsScaleChilds
+        ChildSizing.Layout = cclLeftToRightThenTopToBottom
+        ChildSizing.ControlsPerLine = 2
+        ClientHeight = 187
+        ClientWidth = 320
+        Columns = 2
+        Items.Strings = (
+          'Jahreshauptversamlung'
+          'Montasversamlung'
+          'Freizeitaktivitäten'
+          'Sonstiges'
+          'Telefonisch'
+          'Elektronische Post (eMail)'
+          'Postalisch'
+          'SMS'
+          'Messenger'
+          'Kontaktperson'
+          'Newsletter Empfänger'
+        )
+        TabOrder = 4
+        OnItemClick = memberContactStateItemClick
+        Data = {
+          0B0000000202020202020202020202
+        }
+      end
+      object memberMemo: TMemo
+        Left = 496
+        Height = 191
+        Top = 625
+        Width = 272
+        Anchors = [akTop, akLeft, akRight]
+        TabOrder = 5
+        OnChange = memberMemoChange
+      end
+      object memberMemoLabel: TLabel
+        Left = 496
+        Height = 15
+        Top = 608
+        Width = 222
+        Caption = 'Kommentar (ohne private Informationen):'
+      end
+      object memberContactPerson: TLabeledEdit
+        Left = 10
+        Height = 23
+        Top = 753
+        Width = 142
+        EditLabel.Height = 15
+        EditLabel.Width = 142
+        EditLabel.Caption = 'Kontaktperson:'
+        TabOrder = 6
+        OnChange = memberContactPersonChange
+      end
+      object memberMembershipCostPlanLabel: TLabel
+        Left = 8
+        Height = 15
+        Top = 777
+        Width = 65
+        Caption = 'Beitragssatz:'
+      end
+      object memberMembershipCostPlanCombo: TComboBox
+        Left = 10
+        Height = 23
+        Top = 793
+        Width = 142
+        ItemHeight = 15
+        Style = csDropDownList
+        TabOrder = 7
+        OnChange = memberMembershipCostPlanComboChange
+      end
+    end
+    object statisticSheet: TTabSheet
+      Caption = 'Statistik'
+      ClientHeight = 822
+      ClientWidth = 776
+      ImageIndex = 3
+      object statisticGraph: TPaintBox
+        Left = 8
+        Height = 809
+        Top = 8
+        Width = 761
+        Anchors = [akTop, akLeft, akRight, akBottom]
+        OnClick = statisticGraphClick
+        OnPaint = statisticGraphPaint
+      end
+    end
+    object membershipCostPlan: TTabSheet
+      Caption = 'Beitragssätze'
+      ClientHeight = 822
+      ClientWidth = 776
+      object membershipCostPlanLabel: TLabel
+        Left = 8
+        Height = 15
+        Top = 8
+        Width = 68
+        Caption = 'Beitragssätze'
+      end
+      object membershipCostPlanName: TLabeledEdit
+        Left = 8
+        Height = 23
+        Top = 792
+        Width = 580
+        Anchors = [akLeft, akRight, akBottom]
+        EditLabel.Height = 15
+        EditLabel.Width = 580
+        EditLabel.Caption = 'Name:'
+        TabOrder = 0
+        OnChange = membershipCostPlanNameChange
+      end
+      object membershipCostPlanAge: TLabeledEdit
+        Left = 596
+        Height = 23
+        Top = 792
+        Width = 80
+        Anchors = [akRight, akBottom]
+        EditLabel.Height = 15
+        EditLabel.Width = 80
+        EditLabel.Caption = 'Alter (ab):'
+        TabOrder = 1
+        OnChange = membershipCostPlanAgeChange
+      end
+      object membershipCostPlanAmount: TLabeledEdit
+        Left = 686
+        Height = 23
+        Top = 792
+        Width = 80
+        Anchors = [akRight, akBottom]
+        EditLabel.Height = 15
+        EditLabel.Width = 80
+        EditLabel.Caption = 'Preis:'
+        TabOrder = 2
+        OnChange = membershipCostPlanAmountChange
+      end
+      object membershipCostPlanList: TListView
+        Left = 8
+        Height = 744
+        Top = 24
+        Width = 758
+        Anchors = [akTop, akLeft, akRight, akBottom]
+        Columns = <        
+          item
+            Caption = 'Name'
+            MaxWidth = 900
+            MinWidth = 100
+            Width = 300
+          end        
+          item
+            Alignment = taRightJustify
+            Caption = 'Alter (ab)'
+            MaxWidth = 300
+            MinWidth = 70
+            Width = 70
+          end        
+          item
+            Caption = 'Preis'
+            MaxWidth = 100
+            MinWidth = 40
+            Width = 60
+          end>
+        ColumnClick = False
+        GridLines = True
+        HideSelection = False
+        PopupMenu = membershipCostPlanContextMenu
+        ReadOnly = True
+        RowSelect = True
+        TabOrder = 3
+        ViewStyle = vsReport
+        OnChange = membershipCostPlanListChange
+        OnSelectItem = membershipCostPlanListSelectItem
+      end
+    end
+  end
+  object CoolBar1: TCoolBar
+    Left = 0
+    Height = 37
+    Top = 0
+    Width = 800
+    Bands = <    
+      item
+        Control = fileGroup
+        Width = 179
+      end>
+    EdgeInner = esNone
+    EdgeOuter = esNone
+    Images = toolbarIcons
+    object fileGroup: TToolBar
+      AnchorSideLeft.Control = CoolBar1
+      AnchorSideTop.Control = CoolBar1
+      Left = 22
+      Height = 28
+      Top = 3
+      Width = 105
+      Align = alNone
+      AutoSize = True
+      BorderSpacing.Left = 22
+      BorderSpacing.Top = 3
+      TabOrder = 0
+      object fileSave: TSpeedButton
+        Left = 1
+        Height = 26
+        Hint = 'Speichern'
+        Top = 2
+        Width = 26
+        AutoSize = True
+        Caption = 'Speichern'
+        Flat = True
+        Images = toolbarIcons
+        ImageIndex = 6
+        ShowCaption = False
+        ShowHint = True
+        ParentShowHint = False
+      end
+      object fileSaveAs: TSpeedButton
+        Left = 27
+        Height = 26
+        Hint = 'Speichern unter ...'
+        Top = 2
+        Width = 26
+        AutoSize = True
+        Caption = '...'
+        Flat = True
+        Images = toolbarIcons
+        ImageIndex = 6
+        ShowHint = True
+        ParentShowHint = False
+        OnClick = fileSaveAsClick
+      end
+      object openFileButton: TSpeedButton
+        Left = 53
+        Height = 26
+        Hint = 'Öffnen ...'
+        Top = 2
+        Width = 26
+        AutoSize = True
+        Caption = 'Öffnen ...'
+        Flat = True
+        Images = toolbarIcons
+        ImageIndex = 7
+        ShowCaption = False
+        ShowHint = True
+        ParentShowHint = False
+        OnClick = openFileButtonClick
+      end
+      object BitBtn2: TSpeedButton
+        Left = 79
+        Height = 26
+        Hint = 'Beenden'
+        Top = 2
+        Width = 26
+        AutoSize = True
+        Caption = 'Beenden'
+        Flat = True
+        Images = toolbarIcons
+        ImageIndex = 8
+        ShowCaption = False
+        ShowHint = True
+        ParentShowHint = False
+        OnClick = BitBtn2Click
+      end
+    end
+  end
+  object tabimages: TImageList
+    Left = 152
+    Top = 144
+    Bitmap = {
+      4C7A040000001000000010000000830900000000000078DAB5970954935716C7
+      6DED78A6EDA8E05A419DE252AD80554485EA28885A4A5B450B46C42D1511AA16
+      591517440509B44A050A62955D03CAE60656542820632101312CCA928488E086
+      9090E4CB42F2EF4B9C7082E029E7CC4CCEF99FEFFBDEBBBF77EFBB6F0D802178
+      43FFAC964F9B5C256B9D5C49F54C644931B15C2233BE27AE342E13AFC600F66F
+      6A7215D59DD2AE04470AFC5B0C14088194674A1895889A06C36B7CD651C0AD4E
+      E0D20BE04C1BC0EC50E1A3C22E0C8AFF438C9B5D2A5C7CAE267ED5086C56E200
+      4F89F1051D83E28DCBBA112650C0A64202CBD26E4CBF29C446B614E3F35F0C8A
+      9F5022247E7BE0F94881350FE458F207850D2C09C65E7DDA8F9F5C291B318945
+      B51A974B7B8CEF496074572C332A1621B04986C52479730ABB31F57A1776D5CB
+      3126E7493F7E62859471AA45019E0CA8273963917C673C5360567117DCEAE4F8
+      BA4A864565527890F7311705FD7832AE68A0D4A8261C091BF9AF8042915ADBD7
+      CF49DFCD0B44F838B7136B482CA3CEF3FAF3A5425449D428E952E37627C9777B
+      0FE29FF690BEB66333470E7B960C0B8A25A073641895DCD48F9F50D449C64989
+      7D0D32D06BA458CE96C0BD51863159AD58F0BB08A6F942185D16C1385F8C3157
+      85189DD385D1991D32C3F4E79586E79FAEFEA8E025F14B7C3E56229CA780DF23
+      39B691B646A7F3E14A72BF9CE47EDC75218AC97CA8247D2C23BA41E20CE74B61
+      9020681A97FF0C854215E128B85613FF64CC4FB6F560544A13BE207D9E9DA7F1
+      F94A3B1F6FFF673E26B603D9A4BF234F3761DC95B68C93CD6224102694ABC081
+      66057671449896C103BD5A081FAE1C66792F11D420C1F5576A305FA81149625D
+      5F25C48853751963B2047BB654742082C4C3782C875783185FFCDE0683F8DA5B
+      067135AC91D11CB941FC238143C94BF89036BCB914689C6E58DF7882E111D57B
+      46A7734D46A73585192637B00C13EAE586676A5906719C3083986A135D8E0DCE
+      724D469E6E081B115DCF1A1159231FFE63356B787865D8F05096C96F41763F96
+      9EF51595250642AB847D283DB70F2567F7A2F84C007E3F1D80A2587FDC89F1C3
+      ED281F64FBDA67E98F9F8669C98BC06322C1F508B45C0D07EF3203DC9C303465
+      1D47E3A5503CCA08C1C30BC75093128CBC300F611F3E21F035772D02FC2B84CB
+      65A039FB389A3243D1A0E198C7509F7604B584E5241E465EF80F7DE6D0C3870F
+      35DF7859530C91A00E9D8DAC3EEA9149D056960DDDAFA6A6A60F5F5F5FAF2D7F
+      5C9806CEAFDE5A4663AF93E69B7D6293B66DCD8FC3E10CC84B9FB768DBD0D83D
+      63DFD03EF5DBD1C437105F5757D71B5B5555158A8A8A505E5E0E369B3DA0582C
+      168A8B8B65A9A9A9D7BCBDBD97841756623F97EC714D6ADCB9730712890472B9
+      1C0A85E2AD128BC5686C6CAC4D4E4E4E09BDC5D6B27B1BD4DAF635F5B5B56284
+      86762328480426538C72B2B1240B281C6EA47088882990E2A548AC8955E19C5E
+      1A17FC1B0B41F92C2DDFDA4AD6319DC2D6AD14366FA6B07123D9FB365008AE17
+      C3FF21051FB290BC497B17DB15DABEE8E742C3E7E4BCE6366D22EBD195828B0B
+      F199F61C3EB514F6107637797AD65048695568FDBDC96764487B391A8D82B333
+      856FBFA5E077BF1B3B09E7C1A1E0564D214930305F41D6FFFAF514D6ADA3E0E4
+      4461CD1A0A3B192FE049B8ED0F286CBB4F610BD1B9B7F0329902010142AC5D4B
+      C1D191C2AA5514326F4970B481B0C42F9DB007C95EF354AAECC7DFBE7D5B3B7E
+      4AA512DDDD0A74740C3C8E9A7A8D9DC65E9F673018EB0B0A0AC41515156F9D3F
+      3A695862EFFC57679991D341FAF4388ED0F87C2B4C92B8CA295E89E7A62C5C35
+      6C50E7B083979D492A4F35E1C213E86BEACEF89F07C38FDD722ECA32FB09B6DF
+      68C3897B522CCA6AC32426E1E36A3A07C38F748A3D71E37E3B62EF0A917C5F89
+      5872AEE755B562EEB142DE60F8750E6BDD7DD2EAD499D52264D7AB905B234154
+      513B6C361FCD1AC87EBAAD3B7D19FD17A1EDA628D86D8D559AD33C593BF74629
+      7CB3DA71E4F2631CBAD28E5DA74B61BA7D769E99FFFC0FF5D9698BB6D82DA7FF
+      A2B275FD19FAF28A4C40487C340EC584C3FFA7C348ABBD8CA385A19811649EF4
+      89EF9C0F74BC052DB2D4D1F30CB60567E3E0853A38FB9E871D8963F98ED33878
+      3F117B2BE3E0CD3E091F3603E71E5EC2EEDC3D98EF691DABE3A7D2622E310B1B
+      FBE5CA763F13FB2A23E1CF0EC79E8A63F8BEE200BEFF23105B63E95815CBC55F
+      E5CAE9583802AB6288FF930820ED04549EC2CE6B7ED810B9015FFFDAD6CB9F9A
+      F76EE0EEC0987EB9F27336C3C63437B8A47BC085B903EB52DDB02864092FD8DD
+      3FD82591EBAA61D317BDE3C6F65DDB8DA745C8BA781CCC8443488AF207557E16
+      AD31FE48B77E3F297EE9871F0C3466A71D4C9CAF79394B54F55780BA10A07C3B
+      50B419B8B68E5C3A69C0DD28D41D7245A8DDF4D88178CB90073DD1992CB4E7F8
+      928BC516A8738998AE502591A515F70D54D1DFE06A624A9F5CE96BE9295E9B77
+      6826EE05B90037DDC9058C0EE412FF573691183682CBA021CC37A84FAEF4B523
+      F591F5DAA379FBD39C17E656ECB1C483205B7088AA0FDA82BD7F2932ECA7F2DC
+      FCA27B73F5FF505980259AE35C9DFE1BBEECD052F7E6A8D54CFDF20DEB3B2388
+      F82EB44E0ED1E6B7F177FD2DC10FB39AC70D5FAAE2FE64FBBEA6CCF11B61C9DA
+      D5220551F9B76BBA9A89944402A2296FF2A57E9610047F32947FD84CCE3F3227
+      CF768924CCCE46AC5E69D7BD5867F3E5CAEE295FD90B858E0EAFA4FCE8AF82F5
+      F912DF7908FE62CAA49600E3889CAD3B14561612CA7A81F4177D1BFEE1792778
+      4716AA7847AD95BCE38BE53CC612B5AEAED8D7A2776CAD67BD50AF98DB22EFC3
+      7A7D9CCEF599A6E4FACE489C6F414D5F308FDC155D2FC4E9EA8B7C5EF346E394
+      E7274E902B6FAEFA17C5A77F10D5F2DDF0A1BCEF0C6E70E986B2E6EFC606E9EC
+      CD67C98B669B525DBAEF3BDE73E038E7C06786C355EA51237A8EF3D70F09E1D3
+      86804F7B57C5A70D55F3D60DA3BD99B369267245EFB9E535077F7B07AB87BD8B
+      3EFFEF9A1C87ECB54971885B9CF615EBF3B42FD90B5357F6B6633C5E99AB7B2F
+      F8E133BC3744EEF4DE10E5F8DE3CC43B3858C7DB3F5D78C69E6FF5EBCAAC05E7
+      56DC999FB85C3C2F69D9164D3D89D54867FBDBEED99839F6AC4DEF5EC8B08DB5
+      08B715CE8DB04999FB93CD3F74E573236D189F452DE97776E4EF3487999FF504
+      537FAB7873FF8502F2EC300BB0F278D3CEF4B0D5DFCD8E5A714D431644EB97E7
+      7D6F8E4F3D2C56CFF098BBD2DA71C60AF2D4CE41FB99A327E96C964D1FA57D9F
+      E1656164B661A6C74CDFF9BD715DF334C5550F535CF19885CB44B9EEB390A3D5
+      A7C8DEAED14C64B9BD5626D1A56DAFF5BF58BB7F028A725A9D
+    }
+  end
+  object toolbarIcons: TImageList
+    Left = 568
+    Top = 24
+    Bitmap = {
+      4C7A0A0000001000000010000000D71400000000000078DADD99075453D9BAC7
+      BDE5DDF5E64EB38DDED171EE55C71967C41169823A76C73A76454545141004A5
+      AB20202A5D45A58A05141190AE544111515120340181500248536909494E0AC9
+      FFED7334086A1CD7BAF3DE7AEF65ADFFDA27E7ECDFFE7FDFB7F749F649000CC1
+      BFA9DC031AA80BD2DBF0EFF0B94E738DEB7C57470E3CBF7573B73751C316DDEE
+      32A21DCAF887761A68F0D056AFF79A2BAB3F39FF13FADC9ADFB8F7D7ADE64988
+      F2D7AFEDA923921235114D789B7F60AB812697EFFFD2704445DC70543575FE1C
+      81C7C2797CF9AF0B7B672BFA2CFBB577C28AA55CEE9AE55DC206BF152E03F9FB
+      36EA705932615CE381B1DE093BF748B4D504948E963060609F8623EAA7384767
+      C838C774A41CF7D9628EE71CB9E25A8E8D1A14C73A3FBD942F9EDE281EC45AFC
+      2BAADEFA3B69BDCD0FA19A6AD4242D75213CF5228214D7B3AD5FF1634649AF7D
+      F3B5589AB1EA17AAC1E0EFBE8DBB3EFF0B67D7D0F47A8361A2BA5D5F392BFA4F
+      FD499CFDF314AA47F13ECB4A156B540F4F1BF6B94C3EFC8B3EF786CD435C1B74
+      87A041F7CFB206DDBFC8399BFEA6FB76CDBE1B2F96288EEF58A8E23FFE84D57F
+      FB336A07F6A95D33E4E0BCB0E541B3C357B066862F2B9C71F5D7FE71C68E9626
+      2A8E33F74FC35F878837FC758874747F1D82972FD7095EDA3EE3FCD206ED0BBF
+      C6695D5A9CA519BA88AF7E79813E7D9DC43A46D1F7D6BE9F31F9AB8BF314EFD5
+      3CE707AA79CDE74EF79E1736FDE4BCCF14E7A79F9EE739CD774EF7DBB9A4994D
+      858AADCED753ECB483A7DACD68226DA7CA016D93B7FB4D39A2FD9F2AC7B4EBA7
+      B86AF90D3C9FBA772A7E34515BFD83C9F45F75D6FCB098B4CC1A5C3A79C43845
+      9F05938633C73F58A88D51D93AD964B28D667F5CC9A65390643205374D7EC20D
+      A244E39F90C0E847C41BD19A8C38C3578A258AD9FD4AF803EEDDF7E99FA5E2EF
+      BE2D16357F5B44F57DC312E29B7C8168EC637ED1D85CFEEA8FE1BF2DA67AC3DA
+      A42813028FF8402617087B2EC598FBBCDA8FE169CFA714709BCC54CC4BE07C2B
+      10D929C33FEEF67C54CEDFE4F191D12343F40B39F195C3BE4E8AC31C29466776
+      7E143F36B7171E4D12CC2B1040E3412F266570B1AD5088D1692F3F8AFFFA3E97
+      F8F6C1B45A82B54FC4989347612B4B80AF92DADFE1BF2D127D318E45358FCD17
+      F68D7D2CC098877CD1981C1EEC6B45984D8AA77AB71713537A605E29C6C88496
+      77F86F0A849E671B25E088804A523316A9F7F5E712FC94D303C3A762AC2C1661
+      56AE1026E4786474D33B3C9957B029394A0947C2465A1770972767729D49729F
+      9AC9C3BF12BBB196C432FC1AE75DFE0117C50239EEF7C871A79BD4BBAD0FC1ED
+      7D24D736EC281363294B04AD1C010CCA44187EA5F61DFEEBEC6E324F521C628B
+      60502EC4A242018C6B441819D70CAD7B3C4C49E362CC0D1EC6A6F13132898B11
+      093D1811DB291A16F5A268D8B5F6D5FFC8EC20BEC4F399145E1C096CABC5D84D
+      C61A11D5003D52FB45A4F6A352B8C821EBA188E4984B944EE2F46A1062684853
+      EDA8B4E7B8CB95118E825E29F12773EED3DA87E161B5584272FE3995F6EC62D6
+      E39DD7EB31B40D8827F97E79AE16A36EB65EF7A9E32384306EF5121CAE93C0BC
+      8C87EFAE736050CA8575BD182AA91D70660B90D22547E44B394E9358371773F1
+      C5D9A7D747C63559EA1774C29BC4E3F94C0C0B361F4BEEB5626870C5EDA141E5
+      AC2FFDCAC44383AB9B96DFEF803519C3AA9E826E592F74D25BF0B977A9E588A8
+      FAF123C26B3D865D61B38685548A879DAF600D0D2AF318EA5F3A5E51E3A117EB
+      C77F798EEDF1855F25EB8BD3E5E2CF4F94B23EF72AF2F8DC8D35FE96F3C2130F
+      2EDAF07243EDC128E4101E5C3A84FB170F22E7FC01DC3B7700D98176C8F2B7C5
+      1D5F6BC4DB2C8D1BF4DD4D98C6546F3C236A4AF14663921738373C519FE081DA
+      3877D4C4B8A1FABA2BAA228EA33CCC05A91E26DC417C88FD2B2ED91B0D370997
+      E889BA7877D4C6BA814D7391C751197E1415842D0B3D8254AFFD83D650555515
+      FD1E1DE539E0353D45770D6B90FA4402B4E6C643F12A2F2F1FC457565632E79F
+      DD0D47D9052B86A1FB2B44BF2F3CB59D199B7E959595BD9717BE6864C6A0FB3D
+      2F4C67DA81E3D0F1BD8F7FFAF4697F6CC5C5C5C8CECE467E7E3E0A0B0BDF2B16
+      8B859C9C1CD1D5AB5793ADACACE678DD2D82433DF98CAB95232B2B0B02810062
+      B118128944A9F87C3E6A6A6A2AAE5CB912E676BB90610FB2E5CCF8F4F58A0A3E
+      DCDC7AE1ECCC4364241FF9E483E54A13852335149C88229B84E8E0F1E958251B
+      A31E04B9DC62C1398DC5F0CDCDE43E36A0B07327851D3B286CDB463EFBB65270
+      A9E4C3AE8A8235B991ACC878D16D12269781B5A0F9848457DCF6EDE47ED4A3B0
+      650BF10C7F01EB0A0A9684DD475AD3720A61CD12C6EF6DFEFA75613FA7AB4B61
+      E3460AEBD753B02DE98519E14CCA28189652B8DCF47EBE80DCFF9B3753D8B489
+      C2860D14D6AEA560E6F912A684337A42617709057DA24B4A789148820307B858
+      B78EC29A351456ADA2107B5B80636CC2125F03C23A92CF9A76A1F41DFECE9D3B
+      CCFC49A552F4F64AD0D9F9FE79A4AFD3FDE8FE03794F4FCFCD999999FC828202
+      A5EB47219A25FD37FEDE77D9980D8E069382CAB863AF3563FCE57AE9048BD04B
+      1366ACFADB477D0F2FB75838FE2A47F675440B066AA259F0998FE1BFD2BFE4AB
+      11DF02A3F4569C7A2CC4ACB8568C8B247C5079F7C7F05F6E083C955ED286C087
+      5C5C299122907CAFA7163763FAF1BB9C8FE1372D5F676C1DFE541E5BCA437CA5
+      0C89E502F866B761DE8E6371EFEB3F69BEB1C1028300EEFCEDBE58B833503A55
+      D7946576D0576213D786A3379EC1E9661BCCCF3DC014A39F5355EC343F1DB49F
+      9EA5BF709141806CBEDE190C94C5E910B806FBC1C9DF0B76278F20BCE2068EDD
+      75C30FCE532F7F6FA3FAF7FE3DAFEEE9076B4CCF63B74B3C1C239E62A3CD352C
+      24712CDA730E8E25A138581404AB421F58177AE252550CF6255A42D3542750C1
+      4FD4F58F89BC5BF34EADE63B44E250D169D8157AC1B2E038F6161CC6DE3C7BEC
+      0C34C0AAC07AFC5EAD361CF7827DB13FF1F7C10132CE81A2B3304BB6C5D6D35B
+      B1F2426B3F7F56FDCFF6FBECFDDFA995ED46156C0B37C49628136C89DC834D57
+      0D31CB750EC7C5D8CE654B68BD1ECD46CDFA9361A1CDBA5EB467232EDA1D9121
+      4EB8EC6B072AFF229AFDED10A5F3C9E5E0B99FFEFD7D73766EF9F88DC9161B05
+      B2CA9BC0535720DF08C8268F9AC99BC8A6933CAE3CF4C553273DB82D9C14F83E
+      5EC3F5499F5F2C0B6D09366463A10F792251A41E6497C9AD15F41B647EBF2129
+      346C50AD066AEE594EAB955B2C1E3B6F01328CC906CC004824FE37B79318B6A1
+      DE53171E36CE836A35507BAE56EBAC3B96EA10BE71466281A5069E38CF471951
+      A9E37C143ACCC5F5A5133986B67EFDB5FAEF966DE6898956B73C9DF6A7BAD6EC
+      4D72E9DD73C3B17777FCC19A9D31364EDBA2F64FFC106B937962BD55BA47AB7F
+      5138EEB716A0F86539F29E1721A12E1DFB6E1DC1E66BA6AD1BAE18AD57C65AA6
+      7BF0136A3351CB6B406AF31D5CA8B986C0EACBB8C6494076FB43D8E778634D88
+      3E7FE505BD4163D864784F206C4B343B0D55DC5AF8565D8267A11F5C593E3851
+      1E08EFF2001C7FE28384863498DD72C2D2739B5A16F9AFEDFF1D81B0CE6E8F82
+      F0A4AB1201C4CFBBCC1F471E7BF57FAFDB17BAC1ECBE232C1E3923969382C521
+      BA98777665FFF3F8BE94E335B175A98820711E2D3809C73C77ECBF63DFCFEBC5
+      EEC5CEDB07B12DC306274A83E142D6E46C9F25350ADEF4A6B330B5290B272A82
+      E0405865AF2DE99630BDE78C4BE5D1D03EB140A8E08D121C84D7EB92E054EC0D
+      3BD6D10FF27BB29C70B13C061A9EBFF4F306B17635DEAC73F02A0B8459AE0376
+      DFB3C4C618A3411C2DBD5BD6706305E170D629A8BAE9F4C7BFFDBAA5F3FA1813
+      44D725C3F09E3DF4B3AC987C07F29B53F6635B9A2D22D8C9D03EBD102AC734FA
+      EBB725C26CC2A6ABC62D7BC9DC44D5DCECAF15E39B6241580BE811F65A7512B6
+      469BD36CCB8F475407FD0EB436D460FD6F17B7F30D930F913152E041F231BEED
+      04C30C47B8179C236C3236479B41E5A8069FB0EF5D83CB8237AF5F1CB8BE757E
+      F01A38E59C46604904028B237028CB0B5AA716D06CAB3256A1F9BEAB26FE727A
+      99D3CC938B6AB4BCE6F5AA79CCEE9DE63AA346E5A8BAD3E423AA13FF27EEE17F
+      5777EFDE1D1F1B1B1B40C44E4A4A92A4A6A6222D2D0D191919F2989898BAE8E8
+      E800BA8F323E3E3EBEE2E1C387CC7E98EC73194545452131319139475F236357
+      28E3E3E2E264B5B5B5E070380C4BB7B4E818E896BE467899329EEC8BE55D5D5D
+      64FFD589D6D65634363632A28FE973F435D247E96F015E5E5E88888840515111
+      DADBDB99BD1A2DFA983E475F73757555CAFBF8F8E0E6CD9B080808C0B163C770
+      F8F061383838E0F8F1E33875EA14C2C3C399E30FF9373434F4E7CD66B3993637
+      3797F1A6E7C3D9D959294F7BB4B5B531CCA3478F98967E6E29292981AFAF2F52
+      5252606F6FFF41FFF7F1B4E8B1939393616B6BAB94777777474B4BCB7B79B267
+      C58D1B37606161A194A76BA6C87F205F5A5ACAD43D2121016666664A791B1B1B
+      2179B6912962A0EBA7C89F8E2D343454AEABAB2B50C61B1B1BC790B963D3EB94
+      1E8356737333EAEBEB99DA93FA8877EDDA75F543F71019A392486E6D6D0D4B4B
+      4B989B9BC3C4C4843C976C9212B65A5F5FFFB33FE25EBD6DA6654574868845D4
+      4524C934D392132173EF2BDD36D7C19DFDB390B96F2632CDB4BB332DE714A49A
+      6A6E78CD5F1036948222924B454414646221FA043D90F4BC8094D7C9BC974928
+      48B92F217ACE917794DC91E679EDE84831D5DC4DF82A21A714CFA35D2097D0FD
+      84787CD210D2DE2ED2FF05FA843C66DC3E2117E28E2688DA6AD0559201320648
+      1C22C2F7083925688F7266FAD0A27909F739A4FC2EC697F697F4B443D45E07AA
+      B5068D571DD05D711F69A69A723A5F411DD9BF119EEE432BEF9431699F4326EA
+      2531116F7E37C4CF39A08837D5528D86B04368CBB98E54134DD0B5E2D7E6A12D
+      D289C4D7F84A9DCF08F3DA9BEA85A4B3A59F15B654A1FEF24134678523798F06
+      CD835FFD08AD114E4CDC79A78C90E7B30705BEE644FB907FC6949C3762AE29C4
+      BE688BC68C5024196B30F3C3AB7A8867E187F18CE4F52CDC014DE4B8E9EA6192
+      2751983D38C4AF3EF400EA426C5173D11AB5976C5197721E378C5EF31539AF58
+      229A6314FE8A6DB8728889B73EC48EE1D8176C504DC44E0C4082A13AC3F73CC9
+      228C03A3C6D763D0DE0C1B7A1075C49B66AB2F58A32AD80A4F832D5111E383B8
+      DDEAC8207C7749269AC21C5EAF9FDF5759E03E3C89F446CC2E357A3DA2BB289D
+      89554EEABD2BDBF383A2D742B1DF5E145D7545B401E1CDB5D1C54A25BC03C3DF
+      ADCDF9A068BEF08C095821471145F80CB319F2CEFC24B2261C3EDA3F9F9EE30B
+      8E88DC395D9EB157B3FE656E1C5E3C8CFBE8FC1F9F77C4A373F634DF49EA77FA
+      96A9664ABAA966571A598F2944F4BABA49D646A2913AE2C91CC5EE564334A9D5
+      75126FD4CEE98C6FC4CEE9DC2883E90FFE2FEC277E4F1AC9D5253B721A253BEF
+      37F54B9F68766A4D9DCACDAA51445F0E5212A3BF2A78AD24B648269783FE438E
+      349011D1C72F2829CC1E358BCD1E3D1329645FD84AD9E6B734AADDA8DEA4E035
+      13D83D549F1C3ECD229CAD1720B44180D84621BAA572F0C960BDE41A97887EDF
+      45249141AC95C02EEFF78F66F3B8E4A43F61FD6AF9385AC1C3DEFC4E9817BC80
+      5B59375C9E74C3A1A41B078ABB604DF49CC4A511CFEEEDF78F614BE8DF93FCCB
+      BBE159D4059B7BCFC9739310BCBE57DE74DB33C09FCE4D2B864D29F819116C09
+      7D4E4476444222411F18AE4AD807FF5611DC9E5138C011C2A446806D557C54F2
+      FBA019FE86D7BAC2160B49FFC7BC3EDCEA9622B643828BED629C209C638310E6
+      B5426CAF1660F5533E1695F5A2A497F0A103F8F36C118FE49FD42941F8733102
+      68CF26E2592F8411F1D4ADE46359792F6695F2A05AC4058B2785E6B937BCA63F
+      9BEA26195C21ECD916118E3652B026EC6EB6001B08BB84FEBDBC84879F0BB9F8
+      BEA007F934EFFF8657F7A96EADED91F444D6F16521357C0492D2FA54F5C2BDB2
+      1747CA79B02FE3C1FA0917E6255C98167391F34224274CFFFFA72AEE5596533D
+      AB22A67A54BD202DF54179302D97307EFF1FEEBD3F52FB2F55C0FC42194CCF3F
+      8171503176071462A75F01B69D798C2D3EB9D878E23ED67A662BDDB7991136BE
+      BC1D3165ED882E6D4354710BAE153623ACA01997F39A70E9512356B8DE56CAEF
+      39578218C29DC9E1E054763DBCB36AE1915983E3E96CB8A45621F8410316BBA4
+      2BE5E97869CF9377EBE079A7166E1935389A560DE7E44A38DC7C0AFF7B7598EB
+      98AC94DF71360FE1AC66C6D3F5D62B4FC7A44AD82756C036AE1CA7C9983A0713
+      94F2748D2EE73DC3B174E29952C5781E4CA8804D6C19F6C594E364061BEA3631
+      4AF9F5DE39B898DBF8CAF34605EC88A755CC13E867346305F9B472CC6CC0CF16
+      914AF955EE5938779FD3EF6971FD09CC224BC8B3F7336CC8E9C4515287C96657
+      95F24B8F65C02FBB8EF1DC17550AD36BC5300E2BC2AE5016765C2CC011528789
+      7B4295F20B9C52981A9913CF3DE1C530BC42D64F080BDB2EE4634B701E0E937C
+      BE35BCA8949F6D7F032748DD19CFCB85D0BF5400BDF379D81CF4181B021EE160
+      4C19BEDE794E29AF651707773267C749FD8E92DA3B913AD09EF6843B10FD04B6
+      24A7AFB607BCC3D3CFA5E49917AA56D7A1B23F82A9D177269731DE3804E3765F
+      C01883608CD60FC2C86DFE18A6E7C73C0BD0FADF780F0F19820E22BC916CA03A
+      7E877DF9FD14609B29A067026CDD23C766233936ED966383811C137EE8239DA4
+      BC0FB1DBF7020B97001A1A72A8A9C9A1AA2AC3D4A93268CFEEC3EAED7DF8E724
+      09E94CBD54C66ED6A3FF8703D6AD9363DA341954546458B1A20F2C961C4B574A
+      B14C578A7113C50412BC1CC033F12E5C2267D85EF2CDDCD909AC5CD987E5CBFB
+      D041B2E691A8F3F3E5F8699A040BD6D231F462204FE7AAAE2EC79A353286558C
+      418B663B3AE498334782D1A34598BB8AF6E70EE065D0357C932B1DAF827BC502
+      BFFC22C6A851228C184161F60AD13BFCC65D7226D71F7FECC3D2A56FF372CC9C
+      29C6F0E114BEFC5208EDA5EFF2EBF465983CB90F4B96BCC9976E69964BBABE78
+      21277342E1D34F05D05C4CF3DD037829991B19D4664851502067D8972FE59835
+      4B0C1D1D11C372B9723C7C28C33FC609A1BE907A8B1777D0F3BA7CB3140B9648
+      91972763583AD7A143497F758A61553529682CA230722C8F409DED83D700D541
+      CFEBA2F5127CF7E39B5C3FFB4C804F3E1160D45801E33B722CF71DF6CD18828E
+      31FF1260F64A31662E13417B8988C95583706A0B3ECCBE1983DB41D7F68DBA5F
+      AB9356E71F7DBFFE17FF33FFA4
+    }
+  end
+  object memberContextMenu: TPopupMenu
+    Images = popupIcons
+    Left = 264
+    Top = 294
+    object memberAdd: TMenuItem
+      Caption = 'Hinzufügen ...'
+      ImageIndex = 0
+      OnClick = memberAddClick
+    end
+    object memberRemove: TMenuItem
+      Caption = 'Löschen ...'
+      ImageIndex = 1
+      OnClick = memberRemoveClick
+    end
+    object membershipPay: TMenuItem
+      Caption = 'Beitragszahlung erfassen ...'
+      OnClick = membershipPayClick
+    end
+    object addHistoricMembershipChange: TMenuItem
+      Caption = 'Beitragssatz nachpflegen ...'
+      OnClick = addHistoricMembershipChangeClick
+    end
+  end
+  object popupIcons: TImageList
+    Left = 506
+    Top = 180
+    Bitmap = {
+      4C7A020000001000000010000000E60300000000000078DAB593FB4B9B571CC6
+      F707EC9F98FEB28130D9A4EB460B6DD7B215BAD29256EDB4A4B56AD558134D4A
+      9B6862355173A99165262ABD3851834DA2D15C35B65E5A6256B489364A6B128D
+      0E131D4361F302DBD067E7BC9060C1D79FDC81877338DFF3F9DECE39003EC211
+      4A34AC492D1F524ACB5C8A7089FDC1E6ED81AACD5B7DF7C237CC42696E4F59EA
+      61AC7058C3291F6C8837FBBBF02A3E89C01FB378FDBB1FD68541DC19AA467677
+      71FC4A4701878D150C366C5923C388FCB504D7CA0B3C0A77C330FF0BBAA3568C
+      AD79217EA9C6A5A7DCAD0B8F723EF021F4A853081B3385DC78FF6704BAF74FA0
+      7CF33314535A68660D50CFEA217FAB8575C90DDE9014DFB766C6CE365F4E49F0
+      8495D5F95AF076E31DF4249E3AD88CEA5F55480CF19B3AF05E5581EF93C11275
+      E2DCD32C9CFAE9822CC1DF71CAC39605178C24CF9AC987A87A5D8FB217E2249F
+      6329C18DE7F790EB114233D386075E1D4E68BF0B27F8629B6CC7F5DB0834732D
+      9010966D5C1B14A0785C8627B3261CD79CD949F00556C9CEB3053BA40135EE4E
+      D51CCADF1E91E2F1AC1919CA9349FEA6E56E583DD50A55D000DE8404B7C605B8
+      6A2EF880A3CA19AA40DD540B2A471A915EF77532FFEBCF04328EB908A60507F2
+      C7C5E08E9433F5EEE7B39D65C8758B600C3970BCE95BA4D56624FB77CDC84BC9
+      EC2C8C9590BBE909DB92BD62E23AF984E52387B0DDF376FC682AA56CECB3EAF4
+      94FD6FE072FB4DCE0F8FAF6FE53BEE131F4E34907A0A9F4B91EFA942FD642B61
+      1DC836F1905693B145D803DFE0F9B66CCE3903277EBAED12A42F9B609836C210
+      30E2FE880AC71ACF5036CEC626745A7731F564D379E9370FCF868FA94E6D7ED1
+      7062F373C557E1B49A2FA59F56A7A7E288FFEBFFA1D1D1D14F2C168B9E2864B7
+      DBFF71B95C70BBDDF0783C7B66B379C16432E9E91936BEAFAF6FCEEBF5221008
+      A0B3B393514F4F0FFAFBFB993D6A23BEE7D8F8DEDEDEDD4824826834CAB074A6
+      A239D099DA08BFCBC6777474EC6D6C6C607D7D1DF1781CCBCBCB8CE89AEE511B
+      3903365EA552C16834C2EFF7636D6D0DDBDBDB8CE89AEE519B42A160E5B55A2D
+      6C361BF47A3D6A6B6B51595909894402B95C8EC6C64674757531EBC3E22F2D2D
+      25EB0E8542CC3C3131C1C4A6F72193C958791A63757595617C3E1F330783414C
+      4F4F43A7D3C1E974422C161F1AFF209E8AFA76381C108944AC7C7D7D3D62B1D8
+      81BC52A9C4C0C000F87C3E2B4F7B96A87F3F3F3333C3F4DD6AB582C7E3B1F242
+      A170676C6C6C379103ED5FA27E9A5B7B7BFB5E5656D6361B5F585868267717A2
+      EF94FAA05A5959C1E2E222D37BD29FBFF3F2F23A0FFB43C4C73BA2BD8A8A0A08
+      0402949696A2A8A808999999FF12769ECBE57E7C147FF53F71C1D35C
+    }
+  end
+  object bankContextMenu: TPopupMenu
+    Images = popupIcons
+    Left = 168
+    Top = 432
+    object addBankMovement: TMenuItem
+      Caption = 'Bankbewegung erstellen ...'
+      ImageIndex = 0
+      OnClick = addBankMovementClick
+    end
+    object removeBankMovement: TMenuItem
+      Caption = 'Bankbewegung löschen'
+      ImageIndex = 1
+      OnClick = removeBankMovementClick
+    end
+    object moveBankToCash: TMenuItem
+      Caption = 'Übertrag zur Barkasse ...'
+      OnClick = moveBankToCashClick
+    end
+    object cloneBankMove: TMenuItem
+      Caption = 'Bewegung duplizieren'
+      OnClick = cloneBankMoveClick
+    end
+  end
+  object cashContextMenu: TPopupMenu
+    Images = popupIcons
+    Left = 460
+    Top = 408
+    object addCashIn: TMenuItem
+      Caption = 'Neue Einzahlung ...'
+      ImageIndex = 0
+      OnClick = addIncomingCash
+    end
+    object addCashOut: TMenuItem
+      Caption = 'Neue Auszahlung ...'
+      ImageIndex = 0
+      OnClick = addCashOutClick
+    end
+    object removeCashMove: TMenuItem
+      Caption = 'Bewegung Löschen'
+      ImageIndex = 1
+      OnClick = removeCashMoveClick
+    end
+    object moveCashToBank: TMenuItem
+      Caption = 'Übertrag zum Bankkonto ...'
+      OnClick = moveCashToBankClick
+    end
+    object cloneCashMove: TMenuItem
+      Caption = 'Eintrag Duplizieren'
+      OnClick = cloneCashMoveClick
+    end
+  end
+  object membershipCostPlanContextMenu: TPopupMenu
+    Images = popupIcons
+    Left = 372
+    Top = 568
+    object MenuItem13: TMenuItem
+      Caption = 'Neuer Beitragssatz ...'
+      ImageIndex = 0
+      OnClick = MenuItem13Click
+    end
+    object MenuItem14: TMenuItem
+      Caption = 'Beitragssatz Löschen ...'
+      ImageIndex = 1
+    end
+    object MenuItem15: TMenuItem
+      Caption = 'Beitragssatz Duplizieren'
+    end
+  end
+  object loadFileDialog: TOpenDialog
+    Filter = 'Vereinsverwaltungsdatei|*.vvd'
+    OnSelectionChange = loadFileDialogSelectionChange
+    Left = 624
+    Top = 196
+  end
+  object saveFileAsDialog: TSaveDialog
+    Filter = 'Vereinsverwaltungsdatei|*.vvd'
+    Left = 564
+    Top = 320
+  end
+end
