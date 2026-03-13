@@ -1,0 +1,49 @@
+name: Build Lazarus Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v4
+
+      - name: FreePascal / Lazarus installieren
+        run: choco install lazarus --no-progress -y
+
+      - name: versioninfo.pas mit Git-Tag erzeugen
+        shell: powershell
+        run: |
+          $tag = "${{ github.ref_name }}"
+          $file = "versioninfo.pas"
+
+          if (Test-Path $file) {
+            Remove-Item $file
+          }
+
+          @"
+          unit versioninfo;
+
+          interface
+
+          const
+            APP_VERSION = '$tag';
+
+          implementation
+          end.
+          "@ | Out-File -Encoding ascii $file
+
+      - name: Projekt bauen
+        run: |
+          "C:\lazarus\lazbuild.exe" Vereinsverwaltung.lpi --build-mode=Release
+
+      - name: Release-Datei hochladen
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            **/*.exe
