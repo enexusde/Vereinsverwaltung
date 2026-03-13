@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, ExtCtrls, MD5,
-  StdCtrls, Buttons, Menus, uuid, beitragssatzaenderung, DateUtils, Contnrs, math;
+  StdCtrls, Buttons, Menus, uuid, beitragssatzaenderung, DateUtils, Contnrs, math, versioninfo;
 
 const
   REMARK_SIZE = 1024;
@@ -356,7 +356,7 @@ begin
   bankSheet.Caption:='Bankkonto ' + FormatFloat(AMOUNT_FORMAT, valueCent / 100);;
   overallCent += valueCent;
   statisticGraph.Invalidate;
-  Caption := 'Vereinsverwaltung 1.0 ('+FormatFloat(AMOUNT_FORMAT, overallCent / 100)+')';
+  Caption := 'Vereinsverwaltung ' + APP_VERSION + ' ('+FormatFloat(AMOUNT_FORMAT, overallCent / 100)+')';
   if filename <> '' then
   begin
     Caption:= Caption + ' ' + filename;
@@ -461,6 +461,7 @@ end;
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
+  Caption := 'Vereinsverwaltung ' + APP_VERSION;
   filename := '';
   lastStoredHash := '';
   membershipPricePlanChanges := TObjectList.Create(False);
