@@ -16,7 +16,7 @@ Ein Lazarus-Projekt für die Verwaltung von Vereinen
 
 # Windows
 
-[▼ Vereinsverwaltung.exe (Windows-Download)](https://github.com/enexusde/Vereinsverwaltung/releases/latest/Vereinsverwaltung.exe)
+[▼ Vereinsverwaltung.exe (Windows-Download)](https://github.com/enexusde/Vereinsverwaltung/releases/latest/)
 
 
 
