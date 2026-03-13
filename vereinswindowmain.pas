@@ -73,7 +73,6 @@ type
     toolbarIcons: TImageList;
     membershipCostPlanAmount: TLabeledEdit;
     membershipCostPlanName: TLabeledEdit;
-    membershipCostPlanLabel: TLabel;
     memberContactPerson: TLabeledEdit;
     memberMemoLabel: TLabel;
     memberContactState: TCheckGroup;
@@ -100,6 +99,7 @@ type
     procedure bankExecutionDateChange(Sender: TObject);
     procedure bankMovementNoChange(Sender: TObject);
     procedure bankRecipientChange(Sender: TObject);
+    procedure fileSaveClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure MenuItem14Click(Sender: TObject);
     procedure MenuItem15Click(Sender: TObject);
@@ -807,6 +807,47 @@ begin
   end;
 end;
 
+procedure TForm1.fileSaveClick(Sender: TObject);
+var
+  f: file of TDataset;
+  Data: TDataset;
+  i: integer;
+  p: PItem;
+begin
+  AssignFile(f, filename);
+  Rewrite(f);
+
+  for i := 0 to members.Items.Count - 1 do
+  begin
+    Write(f, PItem(members.Items[i].Data)^);
+  end;
+
+  for i := 0 to membershipCostPlanList.Items.Count - 1 do
+  begin
+    Write(f, PItem(membershipCostPlanList.Items[i].Data)^);
+  end;
+
+  for i := 0 to bankAccountMovements.Items.Count - 1 do
+  begin
+    Write(f, PItem(bankAccountMovements.Items[i].Data)^);
+  end;
+
+  for i := 0 to cashList.Items.Count - 1 do
+  begin
+    Write(f, PItem(cashList.Items[i].Data)^);
+  end;
+
+  for i := 0 to membershipPricePlanChanges.Count - 1 do
+  begin
+    Write(f, PItem(membershipPricePlanChanges.Items[i])^);
+  end;
+  CloseFile(f);
+  lastStoredHash := CalculateDataHash; // we need this in order to mark the file as unchanged
+  recalculateAllCaptions;
+  newButton.enabled := true;
+  recalculateDirtyFlag;
+end;
+
 procedure TForm1.FormDestroy(Sender: TObject);
 begin
   freeMemoryUsage();
@@ -826,7 +867,7 @@ end;
 
 procedure TForm1.newButtonClick(Sender: TObject);
 begin
-  if QuestionDlg('Neue Vereinsverwaltung', 'Sie haben ungespeicherte Änderungen. Sind Sie sicher?', mtConfirmation, [mrYes, 'Ja', mrCancel, 'Abbrechen'], '') = mrCancel then
+  if ((lastStoredHash <> '') AND (lastStoredHash <> CalculateDataHash)) AND (QuestionDlg('Neue Verwaltung', 'Sie haben ungespeicherte Änderungen. Sind Sie sicher?', mtConfirmation, [mrYes, 'Ja', mrCancel, 'Abbrechen'], '') = mrCancel) then
     Exit;
   filename := '';
   freeMemoryUsage();
@@ -877,46 +918,11 @@ begin
 end;
 
 procedure TForm1.fileSaveAsClick(Sender: TObject);
-var
-  f: file of TDataset;
-  Data: TDataset;
-  i: integer;
-  p: PItem;
 begin
   if saveFileAsDialog.Execute then
   begin
-    AssignFile(f, saveFileAsDialog.FileName);
-    Rewrite(f);
-
-    for i := 0 to members.Items.Count - 1 do
-    begin
-      Write(f, PItem(members.Items[i].Data)^);
-    end;
-
-    for i := 0 to membershipCostPlanList.Items.Count - 1 do
-    begin
-      Write(f, PItem(membershipCostPlanList.Items[i].Data)^);
-    end;
-
-    for i := 0 to bankAccountMovements.Items.Count - 1 do
-    begin
-      Write(f, PItem(bankAccountMovements.Items[i].Data)^);
-    end;
-
-    for i := 0 to cashList.Items.Count - 1 do
-    begin
-      Write(f, PItem(cashList.Items[i].Data)^);
-    end;
-
-    for i := 0 to membershipPricePlanChanges.Count - 1 do
-    begin
-      Write(f, PItem(membershipPricePlanChanges.Items[i])^);
-    end;
-    CloseFile(f);
     filename := saveFileAsDialog.FileName;
-    lastStoredHash := CalculateDataHash; // we need this in order to mark the file as unchanged
-    recalculateAllCaptions();
-    newButton.enabled := true;
+    fileSaveClick(sender);
   end;
 end;
 
