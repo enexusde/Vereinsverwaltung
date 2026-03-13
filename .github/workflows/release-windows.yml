@@ -40,7 +40,7 @@ jobs:
 
       - name: Projekt bauen
         run: |
-          "C:\lazarus\lazbuild.exe" Vereinsverwaltung.lpi --build-mode=Release
+          & "C:\lazarus\lazbuild.exe" "Vereinsverwaltung.lpi" --build-mode=Release
 
       - name: Release-Datei hochladen
         uses: softprops/action-gh-release@v2
