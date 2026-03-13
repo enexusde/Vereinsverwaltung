@@ -92,6 +92,7 @@ type
     TabSheet3: TTabSheet;
     statisticSheet: TTabSheet;
     membershipCostPlan: TTabSheet;
+    newButton: TSpeedButton;
     procedure addHistoricMembershipChangeClick(Sender: TObject);
     procedure bankAccountMovementsSelectItem(Sender: TObject; Item: TListItem; Selected: boolean);
     procedure bankChangeChange(Sender: TObject);
@@ -102,6 +103,7 @@ type
     procedure bankMovementNoChange(Sender: TObject);
     procedure bankRecipientChange(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure newButtonClick(Sender: TObject);
 
     procedure openFileButtonClick(Sender: TObject);
 
@@ -122,7 +124,6 @@ type
     procedure FormActivate(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormResize(Sender: TObject);
-    procedure loadFileDialogSelectionChange(Sender: TObject);
     procedure memberChangeNumber(Sender: TObject);
     procedure memberContactPersonChange(Sender: TObject);
     procedure memberContactStateItemClick(Sender: TObject; Index: integer);
@@ -155,7 +156,8 @@ type
 
   public
     membershipPricePlanChanges: TObjectList;
-    procedure recalculateCashAndBank();
+    filename: String;
+    procedure recalculateAllCaptions();
     procedure recalculateMembershipCostPlan();
     procedure freeMemoryUsage();
   end;
@@ -313,7 +315,7 @@ begin
   end;
 end;
 
-procedure TForm1.recalculateCashAndBank();
+procedure TForm1.recalculateAllCaptions();
 var
   i, valueCent, changeCent, overallCent: integer;
 begin
@@ -350,8 +352,10 @@ begin
       end;
   bankSheet.Caption:='Bankkonto ' + FormatFloat(AMOUNT_FORMAT, valueCent / 100);;
   overallCent += valueCent;
-  Form1.Caption:='Vereinsverwaltung 1.0 ('+FormatFloat(AMOUNT_FORMAT, overallCent / 100)+')';
   statisticGraph.Invalidate;
+  Caption:='Vereinsverwaltung 1.0 ('+FormatFloat(AMOUNT_FORMAT, overallCent / 100)+')';
+  if filename <> '' then
+    Caption:= Caption + ' ' + filename;
 end;
 
 procedure paintEntry(i: TListItem; Data: PItem);
@@ -452,7 +456,8 @@ end;
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
-  membershipPricePlanChanges:=TObjectList.Create(False);
+  filename := '';
+  membershipPricePlanChanges := TObjectList.Create(False);
 end;
 
 procedure TForm1.freeMemoryUsage();
@@ -517,7 +522,7 @@ begin
   begin
     PItem(cashList.Items[cashList.ItemIndex].Data)^.cashAmountCentIncomming := Round(StrToFloat(cashChangeCent.Text) * 100);
     paintEntry(cashList.Items[cashList.ItemIndex], PItem(cashList.Items[cashList.ItemIndex].Data));
-    recalculateCashAndBank;
+    recalculateAllCaptions;
   end;
 end;
 
@@ -609,7 +614,7 @@ begin
     clone^.bankExecutionDate := old^.bankExecutionDate;
     clone^.bankMovementChecked:=false;
     paintEntry(bankAccountMovements.Items.Add, clone);
-    recalculateCashAndBank;
+    recalculateAllCaptions;
   end;
 end;
 
@@ -631,7 +636,7 @@ begin
     clone^.cashSmallDescription := old^.cashSmallDescription;
     clone^.cashChecked := false;
     paintEntry(cashList.Items.Add, clone);
-    recalculateCashAndBank;
+    recalculateAllCaptions;
   end;
 end;
 
@@ -673,7 +678,7 @@ begin
       form1.bankMovementNo.Text := bankMovementNo;
       bankComment.Text := bankRemarks;
       bankChecked.Checked := bankMovementChecked;
-      recalculateCashAndBank;
+      recalculateAllCaptions;
     end;
 
 end;
@@ -715,7 +720,7 @@ begin
   begin
     PItem(bankAccountMovements.Items[bankAccountMovements.ItemIndex].Data)^.bankChangeCent := Round(StrToFloat(bankChange.Text) * 100);
     paintEntry(bankAccountMovements.Items[bankAccountMovements.ItemIndex], PItem(bankAccountMovements.Items[bankAccountMovements.ItemIndex].Data));
-    recalculateCashAndBank();
+    recalculateAllCaptions();
   end;
 end;
 
@@ -780,9 +785,54 @@ begin
   membershipPricePlanChanges.Free;
 end;
 
-procedure TForm1.openFileButtonClick(Sender: TObject);
+procedure TForm1.newButtonClick(Sender: TObject);
 begin
-  loadFileDialog.Execute;
+  if QuestionDlg('Neue Vereinsverwaltung', 'Sie haben ungespeicherte Änderungen. Sind Sie sicher?', mtConfirmation, [mrYes, 'Ja', mrCancel, 'Abbrechen'], '') = mrCancel then
+    Exit;
+  filename := '';
+  freeMemoryUsage();
+  recalculateAllCaptions();
+  newButton.enabled := false;
+end;
+
+procedure TForm1.openFileButtonClick(Sender: TObject);
+var
+  f: file of TDataset;
+  p: PItem;
+begin
+  loadFileDialog.filename:='';
+  if loadFileDialog.Execute then
+  begin
+    freeMemoryUsage(); // alte Items freigeben
+    AssignFile(f, loadFileDialog.FileName);
+    Reset(f);
+    while not EOF(f) do
+    begin
+      New(p);
+      Read(f, p^);
+      if p^.Typ = rtMember then
+        paintEntry(members.Items.Add, p);
+      if p^.Typ = rtMembershipCostPlan then
+      begin
+        paintEntry(membershipCostPlanList.Items.Add, p);
+        MembershipChangeForm.membershipChangeAvailableCostPlanList.Items.AddObject(p^.membershipCostName, TObject(p));
+        recalculateMembershipCostPlan();
+      end;
+      if p^.Typ = rtBankAccountMovement then
+        paintEntry(bankAccountMovements.Items.Add, p);
+      if p^.Typ = rtCashRegisterMovement then
+        paintEntry(cashList.Items.Add, p);
+      if p^.Typ = rtMembershipChange then
+      begin
+        membershipPricePlanChanges.add(TObject(p));
+      end;
+    end;
+    CloseFile(f);
+    filename := loadFileDialog.FileName;
+    recalculateAllCaptions();
+    newButton.enabled := true;
+    loadFileDialog.FileName:='';
+  end;
 end;
 
 procedure TForm1.fileSaveAsClick(Sender: TObject);
@@ -821,8 +871,10 @@ begin
     begin
       Write(f, PItem(membershipPricePlanChanges.Items[i])^);
     end;
-
     CloseFile(f);
+    filename := saveFileAsDialog.FileName;
+    recalculateAllCaptions();
+    newButton.enabled := true;
   end;
 end;
 
@@ -835,40 +887,6 @@ end;
 procedure TForm1.FormResize(Sender: TObject);
 begin
 
-end;
-
-procedure TForm1.loadFileDialogSelectionChange(Sender: TObject);
-var
-  f: file of TDataset;
-  p: PItem;
-begin
-  freeMemoryUsage(); // alte Items freigeben
-  AssignFile(f, loadFileDialog.FileName);
-  Reset(f);
-  while not EOF(f) do
-  begin
-    New(p);
-    Read(f, p^);
-    if p^.Typ = rtMember then
-      paintEntry(members.Items.Add, p);
-    if p^.Typ = rtMembershipCostPlan then
-    begin
-      paintEntry(membershipCostPlanList.Items.Add, p);
-      MembershipChangeForm.membershipChangeAvailableCostPlanList.Items.AddObject(p^.membershipCostName, TObject(p));
-      recalculateMembershipCostPlan();
-    end;
-    if p^.Typ = rtBankAccountMovement then
-      paintEntry(bankAccountMovements.Items.Add, p);
-    if p^.Typ = rtCashRegisterMovement then
-      paintEntry(cashList.Items.Add, p);
-    if p^.Typ = rtMembershipChange then
-    begin
-      membershipPricePlanChanges.add(TObject(p));
-    end;
-  end;
-  CloseFile(f);
-
-  recalculateCashAndBank();
 end;
 
 procedure TForm1.memberChangeNumber(Sender: TObject);
@@ -1068,7 +1086,7 @@ begin
 
   end;
   paintEntry(Form1.cashList.Items.Add, newItem);
-  Form1.recalculateCashAndBank();
+  Form1.recalculateAllCaptions();
 end;
 
 procedure addBank(Value: double);
@@ -1088,7 +1106,7 @@ begin
     bankMovementChecked := False;
   end;
   paintEntry(Form1.bankAccountMovements.Items.Add, newItem);
-  Form1.recalculateCashAndBank();
+  Form1.recalculateAllCaptions();
 end;
 
 procedure TForm1.addIncomingCash(Sender: TObject);
@@ -1325,7 +1343,7 @@ end;
 
 procedure TForm1.recalculateCash(Sender: TObject; Item: TListItem);
 begin
-  recalculateCashAndBank();
+  recalculateAllCaptions();
 end;
 
 procedure TForm1.selectCashMove(Sender: TObject; Item: TListItem; Selected: boolean);
@@ -1375,7 +1393,7 @@ begin
       form1.cashChecked.Checked := cashChecked;
       cashShortDescription.Text := cashSmallDescription;
       cashDescription.Text := cashRemarks;
-      recalculateCashAndBank;
+      recalculateAllCaptions;
     end;
 end;
 
