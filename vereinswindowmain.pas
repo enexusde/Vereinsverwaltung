@@ -5,7 +5,7 @@ unit vereinswindowmain;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, ExtCtrls,
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, ExtCtrls, MD5,
   StdCtrls, Buttons, Menus, uuid, beitragssatzaenderung, DateUtils, Contnrs, math;
 
 const
@@ -42,8 +42,6 @@ type
     removeCashMove: TMenuItem;
     cloneCashMove: TMenuItem;
     MenuItem13: TMenuItem;
-    MenuItem14: TMenuItem;
-    MenuItem15: TMenuItem;
     memberRemove: TMenuItem;
     membershipPay: TMenuItem;
     addBankMovement: TMenuItem;
@@ -103,6 +101,8 @@ type
     procedure bankMovementNoChange(Sender: TObject);
     procedure bankRecipientChange(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure MenuItem14Click(Sender: TObject);
+    procedure MenuItem15Click(Sender: TObject);
     procedure newButtonClick(Sender: TObject);
 
     procedure openFileButtonClick(Sender: TObject);
@@ -157,9 +157,12 @@ type
   public
     membershipPricePlanChanges: TObjectList;
     filename: String;
+    lastStoredHash: String;
     procedure recalculateAllCaptions();
+    procedure recalculateDirtyFlag();
     procedure recalculateMembershipCostPlan();
     procedure freeMemoryUsage();
+    function CalculateDataHash: string;
   end;
 
   TType = (rtMember, rtMembershipCostPlan, rtBankAccountMovement, rtCashRegisterMovement, rtMembershipChange);
@@ -353,9 +356,11 @@ begin
   bankSheet.Caption:='Bankkonto ' + FormatFloat(AMOUNT_FORMAT, valueCent / 100);;
   overallCent += valueCent;
   statisticGraph.Invalidate;
-  Caption:='Vereinsverwaltung 1.0 ('+FormatFloat(AMOUNT_FORMAT, overallCent / 100)+')';
+  Caption := 'Vereinsverwaltung 1.0 ('+FormatFloat(AMOUNT_FORMAT, overallCent / 100)+')';
   if filename <> '' then
+  begin
     Caption:= Caption + ' ' + filename;
+  end;
 end;
 
 procedure paintEntry(i: TListItem; Data: PItem);
@@ -457,6 +462,7 @@ end;
 procedure TForm1.FormCreate(Sender: TObject);
 begin
   filename := '';
+  lastStoredHash := '';
   membershipPricePlanChanges := TObjectList.Create(False);
 end;
 
@@ -513,6 +519,7 @@ begin
   begin
     PItem(cashList.Items[cashList.ItemIndex].Data)^.cashCategory := cashCategory.Text;
     paintEntry(cashList.Items[cashList.ItemIndex], PItem(cashList.Items[cashList.ItemIndex].Data));
+    recalculateDirtyFlag
   end;
 end;
 
@@ -523,6 +530,7 @@ begin
     PItem(cashList.Items[cashList.ItemIndex].Data)^.cashAmountCentIncomming := Round(StrToFloat(cashChangeCent.Text) * 100);
     paintEntry(cashList.Items[cashList.ItemIndex], PItem(cashList.Items[cashList.ItemIndex].Data));
     recalculateAllCaptions;
+    recalculateDirtyFlag;
   end;
 end;
 
@@ -532,6 +540,7 @@ begin
   begin
     PItem(cashList.Items[cashList.ItemIndex].Data)^.cashChecked := cashChecked.Checked;
     paintEntry(cashList.Items[cashList.ItemIndex], PItem(cashList.Items[cashList.ItemIndex].Data));
+    recalculateDirtyFlag
   end;
 end;
 
@@ -541,6 +550,7 @@ begin
   begin
     PItem(cashList.Items[cashList.ItemIndex].Data)^.cashMovementDate := StrToDateTime(cashDate.Text);
     paintEntry(cashList.Items[cashList.ItemIndex], PItem(cashList.Items[cashList.ItemIndex].Data));
+    recalculateDirtyFlag
   end;
 
 end;
@@ -551,6 +561,7 @@ begin
   begin
     StrPLCopy(PItem(cashList.Items[cashList.ItemIndex].Data)^.cashRemarks, cashDescription.Text, REMARK_SIZE);
     paintEntry(cashList.Items[cashList.ItemIndex], PItem(cashList.Items[cashList.ItemIndex].Data));
+    recalculateDirtyFlag
   end;
 end;
 
@@ -565,6 +576,7 @@ begin
   begin
     PItem(cashList.Items[cashList.ItemIndex].Data)^.cashMovementNo := cashMoveNo.Text;
     paintEntry(cashList.Items[cashList.ItemIndex], PItem(cashList.Items[cashList.ItemIndex].Data));
+    recalculateDirtyFlag
   end;
 end;
 
@@ -574,6 +586,7 @@ begin
   begin
     PItem(cashList.Items[cashList.ItemIndex].Data)^.cashRecipient := cashRecipient.Text;
     paintEntry(cashList.Items[cashList.ItemIndex], PItem(cashList.Items[cashList.ItemIndex].Data));
+    recalculateDirtyFlag
   end;
 
 end;
@@ -584,6 +597,7 @@ begin
   begin
     PItem(cashList.Items[cashList.ItemIndex].Data)^.cashSmallDescription := cashShortDescription.Text;
     paintEntry(cashList.Items[cashList.ItemIndex], PItem(cashList.Items[cashList.ItemIndex].Data));
+    recalculateDirtyFlag
   end;
 
 end;
@@ -594,6 +608,7 @@ begin
   begin
     PItem(cashList.Items[cashList.ItemIndex].Data)^.cashObject := cashSubject.Text;
     paintEntry(cashList.Items[cashList.ItemIndex], PItem(cashList.Items[cashList.ItemIndex].Data));
+    recalculateDirtyFlag
   end;
 
 end;
@@ -605,6 +620,7 @@ begin
   begin
     old := PItem(bankAccountMovements.Items[bankAccountMovements.ItemIndex].Data);
     new(clone);
+    FillChar(clone^, SizeOf(TDataset), 0);
     clone^.typ := old^.typ;
     clone^.bankMovementNo := old^.bankMovementNo + ' (Duplikat)';
     clone^.bankDesc := old^.bankDesc;
@@ -615,6 +631,7 @@ begin
     clone^.bankMovementChecked:=false;
     paintEntry(bankAccountMovements.Items.Add, clone);
     recalculateAllCaptions;
+    recalculateDirtyFlag
   end;
 end;
 
@@ -625,6 +642,7 @@ begin
   begin
     old := PItem(cashList.Items[cashList.ItemIndex].Data);
     new(clone);
+    FillChar(clone^, SizeOf(TDataset), 0);
     clone^.typ := old^.typ;
     clone^.cashMovementNo := old^.cashMovementNo + ' (Duplikat)';
     clone^.cashAmountCentIncomming := old^.cashAmountCentIncomming;
@@ -637,6 +655,7 @@ begin
     clone^.cashChecked := false;
     paintEntry(cashList.Items.Add, clone);
     recalculateAllCaptions;
+    recalculateDirtyFlag
   end;
 end;
 
@@ -699,6 +718,7 @@ begin
   if MembershipChangeForm.ShowModal = mrOK then
   begin
     New(newChange);
+    FillChar(newChange^, SizeOf(TDataset), 0);
     newChange^.Typ := rtMembershipChange;
     MembershipChangeForm.fill(newChange^.changedSince, TObject(plan));
     newChange^.newPricePlan := plan^.id;
@@ -711,6 +731,7 @@ begin
         xname := PItem(membershipCostPlanList.Items[i].Data)^.membershipCostName;
     end;
     memberMemo.Text:=memberMemo.Text + LineEnding+ 'Beitragssatz seit ' + FormatDateTime('mm.yyyy', newChange^.changedSince)+': '+xname;
+    recalculateDirtyFlag
   end;
 end;
 
@@ -721,6 +742,7 @@ begin
     PItem(bankAccountMovements.Items[bankAccountMovements.ItemIndex].Data)^.bankChangeCent := Round(StrToFloat(bankChange.Text) * 100);
     paintEntry(bankAccountMovements.Items[bankAccountMovements.ItemIndex], PItem(bankAccountMovements.Items[bankAccountMovements.ItemIndex].Data));
     recalculateAllCaptions();
+    recalculateDirtyFlag
   end;
 end;
 
@@ -730,6 +752,7 @@ begin
   begin
     PItem(bankAccountMovements.Items[bankAccountMovements.ItemIndex].Data)^.bankMovementChecked := bankChecked.Checked;
     paintEntry(bankAccountMovements.Items[bankAccountMovements.ItemIndex], PItem(bankAccountMovements.Items[bankAccountMovements.ItemIndex].Data));
+    recalculateDirtyFlag
   end;
 end;
 
@@ -739,6 +762,7 @@ begin
   begin
     StrPLCopy(PItem(bankAccountMovements.Items[bankAccountMovements.ItemIndex].Data)^.bankRemarks, bankComment.Text, REMARK_SIZE);
     paintEntry(bankAccountMovements.Items[bankAccountMovements.ItemIndex], PItem(bankAccountMovements.Items[bankAccountMovements.ItemIndex].Data));
+    recalculateDirtyFlag
   end;
 end;
 
@@ -748,6 +772,7 @@ begin
   begin
     PItem(bankAccountMovements.Items[bankAccountMovements.ItemIndex].Data)^.bankDesc := bankDesc.Text;
     paintEntry(bankAccountMovements.Items[bankAccountMovements.ItemIndex], PItem(bankAccountMovements.Items[bankAccountMovements.ItemIndex].Data));
+    recalculateDirtyFlag
   end;
 end;
 
@@ -758,6 +783,7 @@ begin
   begin
     PItem(bankAccountMovements.Items[bankAccountMovements.ItemIndex].Data)^.bankExecutionDate := t;
     paintEntry(bankAccountMovements.Items[bankAccountMovements.ItemIndex], PItem(bankAccountMovements.Items[bankAccountMovements.ItemIndex].Data));
+    recalculateDirtyFlag
   end;
 end;
 
@@ -767,6 +793,7 @@ begin
   begin
     PItem(bankAccountMovements.Items[bankAccountMovements.ItemIndex].Data)^.bankMovementNo := bankMovementNo.Text;
     paintEntry(bankAccountMovements.Items[bankAccountMovements.ItemIndex], PItem(bankAccountMovements.Items[bankAccountMovements.ItemIndex].Data));
+    recalculateDirtyFlag
   end;
 end;
 
@@ -776,6 +803,7 @@ begin
   begin
     PItem(bankAccountMovements.Items[bankAccountMovements.ItemIndex].Data)^.bankRecipient := bankRecipient.Text;
     paintEntry(bankAccountMovements.Items[bankAccountMovements.ItemIndex], PItem(bankAccountMovements.Items[bankAccountMovements.ItemIndex].Data));
+    recalculateDirtyFlag
   end;
 end;
 
@@ -783,6 +811,17 @@ procedure TForm1.FormDestroy(Sender: TObject);
 begin
   freeMemoryUsage();
   membershipPricePlanChanges.Free;
+end;
+
+
+procedure TForm1.MenuItem14Click(Sender: TObject);
+begin
+
+end;
+
+procedure TForm1.MenuItem15Click(Sender: TObject);
+begin
+
 end;
 
 procedure TForm1.newButtonClick(Sender: TObject);
@@ -809,6 +848,7 @@ begin
     while not EOF(f) do
     begin
       New(p);
+      FillChar(p^, SizeOf(TDataset), 0);
       Read(f, p^);
       if p^.Typ = rtMember then
         paintEntry(members.Items.Add, p);
@@ -830,6 +870,7 @@ begin
     CloseFile(f);
     filename := loadFileDialog.FileName;
     recalculateAllCaptions();
+    lastStoredHash := CalculateDataHash;
     newButton.enabled := true;
     loadFileDialog.FileName:='';
   end;
@@ -873,6 +914,7 @@ begin
     end;
     CloseFile(f);
     filename := saveFileAsDialog.FileName;
+    lastStoredHash := CalculateDataHash; // we need this in order to mark the file as unchanged
     recalculateAllCaptions();
     newButton.enabled := true;
   end;
@@ -895,6 +937,7 @@ begin
   begin
     PItem(members.Items[members.ItemIndex].Data)^.number := memberno.Text;
     paintEntry(members.Items[members.ItemIndex], PItem(members.Items[members.ItemIndex].Data));
+    recalculateDirtyFlag;
   end;
 end;
 
@@ -904,6 +947,7 @@ begin
   begin
     PItem(members.Items[members.ItemIndex].Data)^.contactPerson := memberContactPerson.Text;
     paintEntry(members.Items[members.ItemIndex], PItem(members.Items[members.ItemIndex].Data));
+    recalculateDirtyFlag;
   end;
 end;
 
@@ -975,6 +1019,7 @@ begin
       Exclude(PItem(members.Items[members.ItemIndex].Data)^.flags, newsletter);
 
     paintEntry(members.Items[members.ItemIndex], PItem(members.Items[members.ItemIndex].Data));
+    recalculateDirtyFlag;
   end;
 end;
 
@@ -984,6 +1029,7 @@ begin
   begin
     PItem(members.Items[members.ItemIndex].Data)^.lastContact := StrToDateTime(memberLastContact.Text);
     paintEntry(members.Items[members.ItemIndex], PItem(members.Items[members.ItemIndex].Data));
+    recalculateDirtyFlag;
   end;
 end;
 
@@ -997,6 +1043,7 @@ begin
     pricing := PItem(memberMembershipCostPlanCombo.Items.Objects[memberMembershipCostPlanCombo.ItemIndex]);
     combo^.pricePlan := pricing^.id;
     paintEntry(members.Items[members.ItemIndex], PItem(members.Items[members.ItemIndex].Data));
+    recalculateDirtyFlag;
   end;
 end;
 
@@ -1006,6 +1053,7 @@ begin
   begin
     StrPLCopy(PItem(members.Items[members.ItemIndex].Data)^.remarks, memberMemo.Text, REMARK_SIZE);
     paintEntry(members.Items[members.ItemIndex], PItem(members.Items[members.ItemIndex].Data));
+    recalculateDirtyFlag
   end;
 end;
 
@@ -1026,6 +1074,7 @@ begin
         membershipPricePlanChanges.Delete(i);
       end;
     end;
+    recalculateDirtyFlag
   end;
 end;
 
@@ -1035,6 +1084,7 @@ begin
   begin
     PItem(membershipCostPlanList.Items[membershipCostPlanList.ItemIndex].Data)^.ageFrom := StrToInt(membershipCostPlanAge.Text);
     paintEntry(membershipCostPlanList.Items[membershipCostPlanList.ItemIndex], PItem(membershipCostPlanList.Items[membershipCostPlanList.ItemIndex].Data));
+    recalculateDirtyFlag
   end;
 end;
 
@@ -1044,6 +1094,7 @@ begin
   begin
     PItem(membershipCostPlanList.Items[membershipCostPlanList.ItemIndex].Data)^.planAmountCent := Round(StrToFloat(membershipCostPlanAmount.Text) * 100);
     paintEntry(membershipCostPlanList.Items[membershipCostPlanList.ItemIndex], PItem(membershipCostPlanList.Items[membershipCostPlanList.ItemIndex].Data));
+    recalculateDirtyFlag
   end;
 
 end;
@@ -1061,6 +1112,7 @@ begin
     try
       PItem(members.Items[members.ItemIndex].Data)^.overallPayedCents := Round(StrToFloat(membershipfee.Text) * 100);
       paintEntry(members.Items[members.ItemIndex], PItem(members.Items[members.ItemIndex].Data));
+      recalculateDirtyFlag;
     except
     end;
   end;
@@ -1071,6 +1123,7 @@ var
   newItem: PItem;
 begin
   New(newItem);
+  FillChar(newItem^, SizeOf(TDataset), 0);
   with newItem^ do
   begin
     Typ := rtCashRegisterMovement;
@@ -1094,6 +1147,7 @@ var
   newItem: PItem;
 begin
   New(newItem);
+  FillChar(newItem^, SizeOf(TDataset), 0);
   with newItem^ do
   begin
     Typ := rtBankAccountMovement;
@@ -1120,6 +1174,7 @@ begin
       addCash(StrToFloat(Value));
       cashList.ItemIndex := cashList.Items.Count - 1;
       cashMoveNo.SetFocus;
+      recalculateDirtyFlag
     end;
   end;
 end;
@@ -1140,7 +1195,7 @@ begin
   until false;
   item := PItem(members.Items[members.ItemIndex].Data);
   item^.overallPayedCents := item^.overallPayedCents + Round(StrToFloat(s)*100);
-
+  recalculateDirtyFlag
 end;
 
 procedure TForm1.moveBankToCashClick(Sender: TObject);
@@ -1177,6 +1232,7 @@ begin
 
   // abhebung
   new(Move);
+  FillChar(move^, SizeOf(TDataset), 0);
   move^.Typ:=rtBankAccountMovement;  // abhebung oder einzahlung
   move^.bankRemarks:='Abhebung am '+ DateTimeToStr(nowvalue);
   move^.bankDesc := 'Abhebung zur Barkasse';
@@ -1189,6 +1245,7 @@ begin
 
   // einzahlung
   new(Move);
+  FillChar(move^, SizeOf(TDataset), 0);
   move^.Typ:=rtCashRegisterMovement;  // abhebung oder einzahlung
   move^.cashAmountCentIncomming:=Round(amount *100);
   move^.cashCategory := 'Transfer';
@@ -1199,6 +1256,7 @@ begin
   move^.cashSmallDescription:='Abhebung von Vereinskonto in Barkasse.';
   move^.cashRemarks:='Eingetragen am ' + DateTimeToStr(nowvalue);
   paintEntry(Form1.cashList.Items.Add, move);
+  recalculateDirtyFlag
 end;
 
 procedure TForm1.moveCashToBankClick(Sender: TObject);
@@ -1235,6 +1293,7 @@ begin
 
   // einzahlung
   new(Move);
+  FillChar(move^, SizeOf(TDataset), 0);
   move^.Typ:=rtBankAccountMovement;  // abhebung oder einzahlung
   move^.bankRemarks:='Einzahlung am '+ DateTimeToStr(nowvalue);
   move^.bankDesc := 'Einzahlung von Barkasse';
@@ -1247,6 +1306,7 @@ begin
 
   // entnahme
   new(Move);
+  FillChar(move^, SizeOf(TDataset), 0);
   move^.Typ:=rtCashRegisterMovement;  // abhebung oder einzahlung
   move^.cashAmountCentIncomming:=-Round(amount *100);
   move^.cashCategory := 'Einzahlung';
@@ -1257,7 +1317,7 @@ begin
   move^.cashSmallDescription:='Einzahlung auf Vereinskonto von Barkasse.';
   move^.cashRemarks:='Eingetragen am ' + DateTimeToStr(nowvalue);
   paintEntry(Form1.cashList.Items.Add, move);
-
+  recalculateDirtyFlag
 end;
 
 procedure TForm1.removeCashMoveClick(Sender: TObject);
@@ -1266,6 +1326,7 @@ begin
   begin
     Dispose(PItem(cashList.Items[cashList.ItemIndex].Data));
     cashList.items[cashList.ItemIndex].Delete;
+    recalculateDirtyFlag
   end;
 end;
 
@@ -1281,24 +1342,23 @@ begin
       LineEnding  + 'es wird also automatisch der erste' + LineEnding  + 'des Monats genommen.', False, since) then
       break;
   until TryParseDate(since);
-
+  New(newItem);
+  FillChar(newItem^, SizeOf(TDataset), 0);
+  with newItem^ do
   begin
-    New(newItem);
-    with newItem^ do
-    begin
-      Typ := rtMember;
-      number := '';
-      overallPayedCents := 0;
-      lastContact := Now;
-      memberSince := StrToDate(since);
-      contactPerson := '';
-      remarks := 'Ein neues Mitglied!';
-      flags := [monthContact];
-      paintEntry(members.Items.Add, newItem);
-    end;
-    members.ItemIndex := members.Items.Count - 1;
-    memberno.SetFocus;
+    Typ := rtMember;
+    number := '';
+    overallPayedCents := 0;
+    lastContact := Now;
+    memberSince := StrToDate(since);
+    contactPerson := '';
+    remarks := 'Ein neues Mitglied!';
+    flags := [monthContact];
+    paintEntry(members.Items.Add, newItem);
   end;
+  members.ItemIndex := members.Items.Count - 1;
+  memberno.SetFocus;
+  recalculateDirtyFlag
 end;
 
 procedure TForm1.addBankMovementClick(Sender: TObject);
@@ -1313,6 +1373,7 @@ begin
       addBank(StrToFloat(Value));
       bankAccountMovements.ItemIndex := bankAccountMovements.Items.Count - 1;
       bankDesc.SetFocus;
+      recalculateDirtyFlag
     end;
   end;
 end;
@@ -1323,6 +1384,7 @@ begin
   begin
     Dispose(PItem(bankAccountMovements.Items[bankAccountMovements.ItemIndex].Data));
     bankAccountMovements.items[bankAccountMovements.ItemIndex].Delete;
+    recalculateDirtyFlag
   end;
 end;
 
@@ -1337,6 +1399,7 @@ begin
       addCash(-StrToFloat(Value));
       cashList.ItemIndex := cashList.Items.Count - 1;
       cashMoveNo.SetFocus;
+      recalculateDirtyFlag
     end;
   end;
 end;
@@ -1719,6 +1782,7 @@ begin
   begin
     PItem(membershipCostPlanList.Items[membershipCostPlanList.ItemIndex].Data)^.membershipCostName := membershipCostPlanName.Text;
     paintEntry(membershipCostPlanList.Items[membershipCostPlanList.ItemIndex], PItem(membershipCostPlanList.Items[membershipCostPlanList.ItemIndex].Data));
+    recalculateDirtyFlag
   end;
 end;
 
@@ -1740,6 +1804,7 @@ begin
       begin
         StrToFloat(amount);
         New(newItem);
+        FillChar(newItem^, SizeOf(TDataset), 0);
         newItem^.Typ := rtMembershipCostPlan;
         newItem^.ageFrom := StrToInt(age);
         newItem^.membershipCostName := mname;
@@ -1754,9 +1819,139 @@ begin
         end;
         membershipCostPlanList.ItemIndex := membershipCostPlanList.Items.Count - 1;
         membershipCostPlanName.SetFocus;
+        recalculateDirtyFlag
       end;
     end;
   end;
+end;
+function TForm1.CalculateDataHash: string;
+var
+  ctx: TMD5Context;
+  digest: TMD5Digest;
+  i: Integer;
+  p: PItem;
+
+  procedure MD5UpdateString(const s: string);
+  var
+    b: TBytes;
+  begin
+    b := TEncoding.UTF8.GetBytes(s);
+    if Length(b) > 0 then
+      MD5Update(ctx, b[0], Length(b));
+  end;
+
+  procedure MD5UpdateFixedString(const s: string; maxLen: Integer);
+  var
+    actual: string;
+  begin
+    actual := Copy(s, 1, maxLen);
+    MD5UpdateString(actual);
+  end;
+
+  procedure UpdateMember(data: PItem);
+  begin
+    MD5UpdateString(data^.number);
+    MD5Update(ctx, data^.overallPayedCents, SizeOf(data^.overallPayedCents));
+    MD5Update(ctx, data^.memberSince, SizeOf(data^.memberSince));
+    MD5Update(ctx, data^.lastContact, SizeOf(data^.lastContact));
+    MD5UpdateString(data^.contactPerson);
+    MD5UpdateString(data^.remarks);
+    MD5Update(ctx, data^.flags, SizeOf(data^.flags));
+    MD5Update(ctx, data^.pricePlan, SizeOf(data^.pricePlan));
+  end;
+
+  procedure UpdateMembershipCostPlan(data: PItem);
+  begin
+    MD5UpdateString(data^.membershipCostName);
+    MD5Update(ctx, data^.ageFrom, SizeOf(data^.ageFrom));
+    MD5Update(ctx, data^.planAmountCent, SizeOf(data^.planAmountCent));
+    MD5Update(ctx, data^.id, SizeOf(data^.id));
+  end;
+
+  procedure UpdateBankMovement(data: PItem);
+  begin
+    MD5UpdateString(data^.bankDesc);
+    MD5UpdateString(data^.bankRemarks);
+    MD5Update(ctx, data^.bankChangeCent, SizeOf(data^.bankChangeCent));
+    MD5UpdateString(data^.bankRecipient);
+    MD5Update(ctx, data^.bankExecutionDate, SizeOf(data^.bankExecutionDate));
+    MD5UpdateString(data^.bankMovementNo);
+    MD5Update(ctx, data^.bankMovementChecked, SizeOf(data^.bankMovementChecked));
+  end;
+
+  procedure UpdateCashMovement(data: PItem);
+  begin
+    MD5UpdateString(data^.cashMovementNo);
+    MD5Update(ctx, data^.cashAmountCentIncomming, SizeOf(data^.cashAmountCentIncomming));
+    MD5UpdateString(data^.cashCategory);
+    MD5UpdateString(data^.cashObject);
+    MD5UpdateString(data^.cashRecipient);
+    MD5Update(ctx, data^.cashMovementDate, SizeOf(data^.cashMovementDate));
+    MD5Update(ctx, data^.cashChecked, SizeOf(data^.cashChecked));
+    MD5UpdateString(data^.cashSmallDescription);
+    MD5UpdateString(data^.cashRemarks);
+  end;
+
+  procedure UpdateMembershipChange(data: PItem);
+  begin
+    MD5UpdateString(data^.memberNumber);
+    MD5Update(ctx, data^.newPricePlan, SizeOf(data^.newPricePlan));
+    MD5Update(ctx, data^.changedSince, SizeOf(data^.changedSince));
+  end;
+
+begin
+  MD5Init(ctx);
+
+  // members
+  for i := 0 to members.Items.Count - 1 do
+  begin
+    p := PItem(members.Items[i].Data);
+    UpdateMember(p);
+  end;
+
+  // membership cost plans
+  for i := 0 to membershipCostPlanList.Items.Count - 1 do
+  begin
+    p := PItem(membershipCostPlanList.Items[i].Data);
+    UpdateMembershipCostPlan(p);
+  end;
+
+  // bank movements
+  for i := 0 to bankAccountMovements.Items.Count - 1 do
+  begin
+    p := PItem(bankAccountMovements.Items[i].Data);
+    UpdateBankMovement(p);
+  end;
+
+  // cash movements
+  for i := 0 to cashList.Items.Count - 1 do
+  begin
+    p := PItem(cashList.Items[i].Data);
+    UpdateCashMovement(p);
+  end;
+
+  // historic price plan changes
+  for i := 0 to membershipPricePlanChanges.Count - 1 do
+  begin
+    p := PItem(membershipPricePlanChanges[i]);
+    UpdateMembershipChange(p);
+  end;
+
+  MD5Final(ctx, digest);
+  Result := MD5Print(digest);
+end;
+procedure TForm1.recalculateDirtyFlag();
+var dirty, hasFlag: boolean;
+begin
+  dirty := (lastStoredHash <> '') AND (lastStoredHash <> CalculateDataHash);
+  hasFlag := (Length(Caption) > 0) AND (Caption[Length(Caption)] = '*');
+  if dirty AND not hasFlag then
+    Caption := Caption + ' *';
+  if hasFlag AND NOT dirty then
+    Caption := Copy(Caption,1, Length(Caption) - 2);
+
+  fileSave.Enabled := dirty;
+
 end;
 
 end.
