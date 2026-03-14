@@ -19,12 +19,20 @@ jobs:
       - name: FreePascal / Lazarus installieren
         run: choco install lazarus --no-progress -y
 
+      - name: Lazarus zum PATH hinzufügen
+        run: |
+          echo "C:\lazarus" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
       - name: Version setzen
         run: |
           $ver="${{ github.ref_name }}".TrimStart("v")
           (Get-Content Vereinsverwaltung.lpi) `
             -replace 'ProductVersion="[^"]+"', "ProductVersion=""$ver.0""" `
             | Set-Content Vereinsverwaltung.lpi
+
+      - name: Projekt bauen
+        run: |
+          lazbuild Vereinsverwaltung.lpi
 
       - name: Neue Release .exe hochladen
         uses: softprops/action-gh-release@v2
