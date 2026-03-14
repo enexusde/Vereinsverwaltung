@@ -1,4 +1,4 @@
-name: Build Lazarus Release
+name: Release new Version
 
 on:
   push:
@@ -26,7 +26,7 @@ jobs:
             -replace 'ProductVersion="[^"]+"', "ProductVersion=""$ver.0""" `
             | Set-Content Vereinsverwaltung.lpi
 
-      - name: Release-Datei hochladen
+      - name: Neue Release .exe hochladen
         uses: softprops/action-gh-release@v2
         with:
           files: |
