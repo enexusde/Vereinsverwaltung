@@ -23,6 +23,7 @@ type
     membershipChangeCostPlanLabel: TLabel;
     membershipChangeMemberNo: TLabeledEdit;
     membershipChangeAvailableCostPlanList: TListBox;
+    procedure FormShow(Sender: TObject);
     procedure membershipChangeAvailableCostPlanListSelectionChange(
       Sender: TObject; User: boolean);
   private
@@ -45,6 +46,11 @@ begin
   outDate := membershipCostPlanChangeDate.DateTime;
   outDate := EncodeDate(YearOf(outDate), MonthOf(outDate), 1);
   pricePlan := membershipChangeAvailableCostPlanList.Items.Objects[membershipChangeAvailableCostPlanList.ItemIndex];
+end;
+
+procedure TMembershipChangeForm.FormShow(Sender: TObject);
+begin
+  save.Enabled := membershipChangeAvailableCostPlanList.ItemIndex > -1;
 end;
 
 procedure TMembershipChangeForm.membershipChangeAvailableCostPlanListSelectionChange

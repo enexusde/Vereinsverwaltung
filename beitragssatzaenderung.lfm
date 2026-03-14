@@ -48,6 +48,7 @@ object MembershipChangeForm: TMembershipChangeForm
     0000
   }
   LCLVersion = '4.6.0.0'
+  OnShow = FormShow
   object membershipChangeAvailableCostPlanList: TListBox
     Left = 8
     Height = 112
