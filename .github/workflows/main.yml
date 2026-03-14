@@ -21,4 +21,4 @@ jobs:
 
     - name: Projekt bauen
       run: |
-        lazbuild Vereinsverwaltung.lpi
+        lazbuild Vereinsverwaltung.lpi --os=win64 --cpu=x86_64
