@@ -6,7 +6,8 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, ExtCtrls, MD5,
-  StdCtrls, Buttons, Menus, uuid, beitragssatzaenderung, DateUtils, Contnrs, math, versioninfo;
+  Windows,
+  StdCtrls, Buttons, Menus, uuid, beitragssatzaenderung, DateUtils, Contnrs, math;
 
 const
   REMARK_SIZE = 1024;
@@ -17,6 +18,7 @@ type
   { TForm1 }
 
   TForm1 = class(TForm)
+    removeButton: TSpeedButton;
     addHistoricMembershipChange: TMenuItem;
     bankAccountMovements: TListView;
     bankDesc: TLabeledEdit;
@@ -70,6 +72,7 @@ type
     cashContextMenu: TPopupMenu;
     membershipCostPlanContextMenu: TPopupMenu;
     saveFileAsDialog: TSaveDialog;
+    ad: TToolBar;
     toolbarIcons: TImageList;
     membershipCostPlanAmount: TLabeledEdit;
     membershipCostPlanName: TLabeledEdit;
@@ -83,13 +86,16 @@ type
     members: TListView;
     memberMemo: TMemo;
     tabimages: TImageList;
-    PageControl1: TPageControl;
+    objectControl: TPageControl;
     cashSheet: TTabSheet;
     bankSheet: TTabSheet;
-    TabSheet3: TTabSheet;
+    memberSheet: TTabSheet;
     statisticSheet: TTabSheet;
     membershipCostPlan: TTabSheet;
     newButton: TSpeedButton;
+    addButton: TSpeedButton;
+    ToolButton2: TToolButton;
+    procedure addButtonClick(Sender: TObject);
     procedure addHistoricMembershipChangeClick(Sender: TObject);
     procedure bankAccountMovementsSelectItem(Sender: TObject; Item: TListItem; Selected: boolean);
     procedure bankChangeChange(Sender: TObject);
@@ -99,11 +105,14 @@ type
     procedure bankExecutionDateChange(Sender: TObject);
     procedure bankMovementNoChange(Sender: TObject);
     procedure bankRecipientChange(Sender: TObject);
+    procedure CoolBar1Change(Sender: TObject);
+    procedure fileGroupClick(Sender: TObject);
     procedure fileSaveClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure MenuItem14Click(Sender: TObject);
     procedure MenuItem15Click(Sender: TObject);
     procedure newButtonClick(Sender: TObject);
+    procedure objectControlChange(Sender: TObject);
 
     procedure openFileButtonClick(Sender: TObject);
 
@@ -141,6 +150,7 @@ type
     procedure membershipPayClick(Sender: TObject);
     procedure moveBankToCashClick(Sender: TObject);
     procedure moveCashToBankClick(Sender: TObject);
+    procedure removeButtonClick(Sender: TObject);
     procedure removeCashMoveClick(Sender: TObject);
     procedure memberAddClick(Sender: TObject);
     procedure addBankMovementClick(Sender: TObject);
@@ -160,6 +170,7 @@ type
     lastStoredHash: String;
     procedure recalculateAllCaptions();
     procedure recalculateDirtyFlag();
+    procedure recalculateToolbarButtons();
     procedure recalculateMembershipCostPlan();
     procedure freeMemoryUsage();
     function CalculateDataHash: string;
@@ -219,6 +230,34 @@ var
 
 implementation
 
+function GetAppVersion: string;
+var
+  Size, Handle: DWORD;
+  Buffer: Pointer;
+  FixedPtr: PVSFixedFileInfo;
+  FixedSize: UINT;
+begin
+  Result := '';
+  Size := GetFileVersionInfoSize(PChar(ParamStr(0)), Handle);
+  if Size = 0 then Exit;
+
+  GetMem(Buffer, Size);
+  try
+    if GetFileVersionInfo(PChar(ParamStr(0)), Handle, Size, Buffer) then
+    begin
+      if VerQueryValue(Buffer, '\', Pointer(FixedPtr), FixedSize) then
+      begin
+        Result :=
+          IntToStr(HiWord(FixedPtr^.dwFileVersionMS)) + '.' +
+          IntToStr(LoWord(FixedPtr^.dwFileVersionMS)) + '.' +
+          IntToStr(HiWord(FixedPtr^.dwFileVersionLS)) + '.' +
+          IntToStr(LoWord(FixedPtr^.dwFileVersionLS));
+      end;
+    end;
+  finally
+    FreeMem(Buffer);
+  end;
+end;
 
 function MonthsBetweenDates(d1, d2: TDate): Integer;
 begin
@@ -280,10 +319,6 @@ begin
   Result := Result - member^.overallPayedCents;
 end;
 
-
-
-
-
 function StrToFloat(const S: string): double;
 var
   tmp: string;
@@ -301,7 +336,6 @@ begin
 end;
 
 {$R *.lfm}
-
 
 procedure TForm1.recalculateMembershipCostPlan();
 var
@@ -356,7 +390,7 @@ begin
   bankSheet.Caption:='Bankkonto ' + FormatFloat(AMOUNT_FORMAT, valueCent / 100);;
   overallCent += valueCent;
   statisticGraph.Invalidate;
-  Caption := 'Vereinsverwaltung ' + APP_VERSION + ' ('+FormatFloat(AMOUNT_FORMAT, overallCent / 100)+')';
+  Caption := 'Vereinsverwaltung ' + GetAppVersion + ' ('+FormatFloat(AMOUNT_FORMAT, overallCent / 100)+')';
   if filename <> '' then
   begin
     Caption:= Caption + ' ' + filename;
@@ -461,7 +495,7 @@ end;
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
-  Caption := 'Vereinsverwaltung ' + APP_VERSION;
+  Caption := 'Vereinsverwaltung ' + GetAppVersion;
   filename := '';
   lastStoredHash := '';
   membershipPricePlanChanges := TObjectList.Create(False);
@@ -589,7 +623,6 @@ begin
     paintEntry(cashList.Items[cashList.ItemIndex], PItem(cashList.Items[cashList.ItemIndex].Data));
     recalculateDirtyFlag
   end;
-
 end;
 
 procedure TForm1.cashShortDescriptionChange(Sender: TObject);
@@ -700,7 +733,7 @@ begin
       bankChecked.Checked := bankMovementChecked;
       recalculateAllCaptions;
     end;
-
+  recalculateToolbarButtons;
 end;
 
 procedure TForm1.addHistoricMembershipChangeClick(Sender: TObject);
@@ -734,6 +767,25 @@ begin
     memberMemo.Text:=memberMemo.Text + LineEnding+ 'Beitragssatz seit ' + FormatDateTime('mm.yyyy', newChange^.changedSince)+': '+xname;
     recalculateDirtyFlag
   end;
+end;
+
+procedure TForm1.addButtonClick(Sender: TObject);
+var x: TTabSheet;
+begin
+  x:= objectControl.ActivePage;
+  if (x = cashSheet) then
+  begin
+    if QuestionDlg('Bewegungstyp', 'Einzahlung oder Auszahlung?', mtConfirmation, [mrYes, 'Einzahlung', mrNo, 'Auszahlung'], '') = mrYes then
+      addIncomingCash(sender)
+    else
+      addCashOutClick(sender);
+  end
+  else if (objectControl.ActivePage = bankSheet) then
+    addBankMovementClick(sender)
+  else if (objectControl.ActivePage = memberSheet)then
+    memberAddClick(sender)
+  else if (objectControl.ActivePage = membershipCostPlan) then
+    MenuItem13Click(sender);
 end;
 
 procedure TForm1.bankChangeChange(Sender: TObject);
@@ -808,6 +860,16 @@ begin
   end;
 end;
 
+procedure TForm1.CoolBar1Change(Sender: TObject);
+begin
+
+end;
+
+procedure TForm1.fileGroupClick(Sender: TObject);
+begin
+
+end;
+
 procedure TForm1.fileSaveClick(Sender: TObject);
 var
   f: file of TDataset;
@@ -874,6 +936,11 @@ begin
   freeMemoryUsage();
   recalculateAllCaptions();
   newButton.enabled := false;
+end;
+
+procedure TForm1.objectControlChange(Sender: TObject);
+begin
+  recalculateToolbarButtons;
 end;
 
 procedure TForm1.openFileButtonClick(Sender: TObject);
@@ -1327,6 +1394,18 @@ begin
   recalculateDirtyFlag
 end;
 
+procedure TForm1.removeButtonClick(Sender: TObject);
+begin
+  if (objectControl.ActivePage = cashSheet) AND (cashList.ItemIndex > -1) then
+    removeCashMoveClick(sender)
+  else if (objectControl.ActivePage = bankSheet) AND (bankAccountMovements.ItemIndex > -1) then
+    removeBankMovementClick(sender)
+  else if (objectControl.ActivePage = memberSheet) AND (members.ItemIndex > -1) then
+    memberRemoveClick(sender)
+  else if (objectControl.ActivePage = membershipCostPlan) AND (membershipCostPlanList.ItemIndex > -1) then
+    memberRemoveClick(sender);
+end;
+
 procedure TForm1.removeCashMoveClick(Sender: TObject);
 begin
   if cashList.ItemIndex > -1 then
@@ -1465,6 +1544,7 @@ begin
       cashDescription.Text := cashRemarks;
       recalculateAllCaptions;
     end;
+  recalculateToolbarButtons;
 end;
 
 procedure TForm1.statisticGraphClick(Sender: TObject);
@@ -1545,7 +1625,6 @@ var
   begin
     minVal := 1e18;
     maxVal := -1e18;
-
     for i := 0 to totalMonths-1 do
     begin
       minVal := Min(minVal, bankSeries[i]);
@@ -1755,6 +1834,7 @@ begin
 
     end;
   end;
+  recalculateToolbarButtons;
 end;
 
 
@@ -1781,6 +1861,7 @@ begin
       membershipCostPlanAmount.Text := FormatFloat(AMOUNT_FORMAT, planAmountCent / 100);
     end;
   end;
+  recalculateToolbarButtons;
 end;
 
 procedure TForm1.membershipCostPlanNameChange(Sender: TObject);
@@ -1908,42 +1989,31 @@ var
 
 begin
   MD5Init(ctx);
-
-  // members
   for i := 0 to members.Items.Count - 1 do
   begin
     p := PItem(members.Items[i].Data);
     UpdateMember(p);
   end;
-
-  // membership cost plans
   for i := 0 to membershipCostPlanList.Items.Count - 1 do
   begin
     p := PItem(membershipCostPlanList.Items[i].Data);
     UpdateMembershipCostPlan(p);
   end;
-
-  // bank movements
   for i := 0 to bankAccountMovements.Items.Count - 1 do
   begin
     p := PItem(bankAccountMovements.Items[i].Data);
     UpdateBankMovement(p);
   end;
-
-  // cash movements
   for i := 0 to cashList.Items.Count - 1 do
   begin
     p := PItem(cashList.Items[i].Data);
     UpdateCashMovement(p);
   end;
-
-  // historic price plan changes
   for i := 0 to membershipPricePlanChanges.Count - 1 do
   begin
     p := PItem(membershipPricePlanChanges[i]);
     UpdateMembershipChange(p);
   end;
-
   MD5Final(ctx, digest);
   Result := MD5Print(digest);
 end;
@@ -1956,9 +2026,23 @@ begin
     Caption := Caption + ' *';
   if hasFlag AND NOT dirty then
     Caption := Copy(Caption,1, Length(Caption) - 2);
-
   fileSave.Enabled := dirty;
+end;
 
+procedure TForm1.recalculateToolbarButtons();
+var enable:boolean;
+begin
+  enable := false;
+  if objectControl.ActivePage = cashSheet then
+    enable := cashList.ItemIndex > -1
+  else if objectControl.ActivePage = bankSheet then
+    enable := bankAccountMovements.ItemIndex > -1
+  else if objectControl.ActivePage = memberSheet then
+    enable := members.ItemIndex > -1
+  else if objectControl.ActivePage = membershipCostPlan then
+    enable := membershipCostPlanList.ItemIndex > -1;
+  addButton.Enabled:=not enable;
+  removeButton.Enabled:=enable;
 end;
 
 end.
