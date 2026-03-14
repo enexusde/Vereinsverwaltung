@@ -16,7 +16,7 @@ jobs:
 
     - name: Lazarus installieren
       run: |
-        choco install lazarus --yes
+        choco install lazarus --no-progress --yes
 
     - name: Lazarus zum PATH hinzufügen
       run: |
