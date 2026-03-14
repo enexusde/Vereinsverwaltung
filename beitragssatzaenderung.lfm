@@ -55,6 +55,7 @@ object MembershipChangeForm: TMembershipChangeForm
     Width = 136
     ItemHeight = 0
     TabOrder = 0
+    OnSelectionChange = membershipChangeAvailableCostPlanListSelectionChange
   end
   object membershipChangeMemberNo: TLabeledEdit
     Left = 8
@@ -97,6 +98,7 @@ object MembershipChangeForm: TMembershipChangeForm
     Top = 80
     Width = 94
     Caption = 'Speichern'
+    Enabled = False
     ModalResult = 1
     Images = Form1.toolbarIcons
     ImageIndex = 6

@@ -20,7 +20,7 @@ type
   TForm1 = class(TForm)
     removeButton: TSpeedButton;
     addHistoricMembershipChange: TMenuItem;
-    bankAccountMovements: TListView;
+    bankList: TListView;
     bankDesc: TLabeledEdit;
     bankChecked: TCheckBox;
     bankCommentLabel: TLabel;
@@ -37,7 +37,7 @@ type
     fileGroup: TToolBar;
     fileSave: TSpeedButton;
     fileSaveAs: TSpeedButton;
-    membershipCostPlanList: TListView;
+    planList: TListView;
     memberAdd: TMenuItem;
     addCashIn: TMenuItem;
     statisticGraph: TPaintBox;
@@ -97,7 +97,7 @@ type
     ToolButton2: TToolButton;
     procedure addButtonClick(Sender: TObject);
     procedure addHistoricMembershipChangeClick(Sender: TObject);
-    procedure bankAccountMovementsSelectItem(Sender: TObject; Item: TListItem; Selected: boolean);
+    procedure bankListSelectItem(Sender: TObject; Item: TListItem; Selected: boolean);
     procedure bankChangeChange(Sender: TObject);
     procedure bankCheckedChange(Sender: TObject);
     procedure bankCommentChange(Sender: TObject);
@@ -142,8 +142,8 @@ type
     procedure memberRemoveClick(Sender: TObject);
     procedure membershipCostPlanAgeChange(Sender: TObject);
     procedure membershipCostPlanAmountChange(Sender: TObject);
-    procedure membershipCostPlanListChange(Sender: TObject; Item: TListItem; Change: TItemChange);
-    procedure membershipCostPlanListSelectItem(Sender: TObject; Item: TListItem; Selected: boolean);
+    procedure planListChange(Sender: TObject; Item: TListItem; Change: TItemChange);
+    procedure planListSelectItem(Sender: TObject; Item: TListItem; Selected: boolean);
     procedure membershipCostPlanNameChange(Sender: TObject);
     procedure membershipfeeChange(Sender: TObject);
     procedure addIncomingCash(Sender: TObject);
@@ -165,7 +165,7 @@ type
   private
 
   public
-    membershipPricePlanChanges: TObjectList;
+    planChanges: TObjectList;
     filename: String;
     lastStoredHash: String;
     procedure recalculateAllCaptions();
@@ -269,11 +269,11 @@ var
   i: Integer;
 begin
   Result := 0;
-  for i := 0 to Form1.membershipCostPlanList.Items.Count - 1 do
-    if PItem(Form1.membershipCostPlanList.Items[i].Data)^.id.ToString(True) =
+  for i := 0 to Form1.planList.Items.Count - 1 do
+    if PItem(Form1.planList.Items[i].Data)^.id.ToString(True) =
        planId.ToString(True) then
     begin
-      Result := PItem(Form1.membershipCostPlanList.Items[i].Data)^.planAmountCent;
+      Result := PItem(Form1.planList.Items[i].Data)^.planAmountCent;
       Exit;
     end;
 end;
@@ -293,9 +293,9 @@ begin
   startDate := member^.memberSince;
   currentPlan := member^.pricePlan;
 
-  for i := 0 to Form1.membershipPricePlanChanges.Count - 1 do
+  for i := 0 to Form1.planChanges.Count - 1 do
   begin
-    change := PItem(Form1.membershipPricePlanChanges[i]);
+    change := PItem(Form1.planChanges[i]);
 
     if change^.memberNumber = member^.number then
     begin
@@ -343,9 +343,9 @@ var
   item: TListItem;
 begin
   memberMembershipCostPlanCombo.Clear;
-  for i := 0 to membershipCostPlanList.Items.Count - 1 do
+  for i := 0 to planList.Items.Count - 1 do
   begin
-    item := membershipCostPlanList.Items[i];
+    item := planList.Items[i];
     if item.Data <> nil then
       memberMembershipCostPlanCombo.Items.AddObject(PItem(item.Data)^.membershipCostName + ' (' + FormatFloat(AMOUNT_FORMAT,
         PItem(item.Data)^.planAmountCent / 100) + ')', TObject(item.Data));
@@ -374,8 +374,8 @@ begin
   cashSheet.Caption:='Barkasse ' + FormatFloat(AMOUNT_FORMAT, valueCent / 100);;
   overallCent:=valueCent;
   valueCent := 0;
-  for i := 0 to bankAccountMovements.Items.Count - 1 do
-    with bankAccountMovements.Items[i] do
+  for i := 0 to bankList.Items.Count - 1 do
+    with bankList.Items[i] do
       if SubItems.Count > 1 then
       begin
         changeCent := PItem(Data)^.bankChangeCent;
@@ -417,15 +417,15 @@ begin
     i.SubItems[3] := 'Aktiv';
     i.SubItems[4] := '';
 
-    for j := 0 to Form1.membershipCostPlanList.Items.Count - 1 do
-      if Data^.pricePlan.ToString(False) = PItem(Form1.membershipCostPlanList.Items[j].Data)^.id.ToString(False) then
-        i.SubItems[5] := FormatFloat(AMOUNT_FORMAT, PItem(Form1.membershipCostPlanList.Items[j].Data)^.planAmountCent / 100);
+    for j := 0 to Form1.planList.Items.Count - 1 do
+      if Data^.pricePlan.ToString(False) = PItem(Form1.planList.Items[j].Data)^.id.ToString(False) then
+        i.SubItems[5] := FormatFloat(AMOUNT_FORMAT, PItem(Form1.planList.Items[j].Data)^.planAmountCent / 100);
   end;
 
   if Data^.typ = rtMembershipCostPlan then
   begin
     i.Caption := Data^.membershipCostName;
-    while (i.SubItems.Count < Form1.membershipCostPlanList.Columns.Count) do
+    while (i.SubItems.Count < Form1.planList.Columns.Count) do
       i.SubItems.Add('');
     i.SubItems[0] := IntToStr(Data^.ageFrom);
     i.SubItems[1] := FormatFloat(AMOUNT_FORMAT, Data^.planAmountCent / 100);
@@ -449,7 +449,7 @@ begin
   if Data^.typ = rtBankAccountMovement then
   begin
     i.Caption := '...';
-    while (i.SubItems.Count < Form1.bankAccountMovements.Columns.Count) do
+    while (i.SubItems.Count < Form1.bankList.Columns.Count) do
       i.SubItems.Add('');
     i.SubItems[0] := FormatFloat(AMOUNT_FORMAT, Data^.bankChangeCent / 100);
     i.SubItems[1] := '...';
@@ -498,7 +498,7 @@ begin
   Caption := 'Vereinsverwaltung ' + GetAppVersion;
   filename := '';
   lastStoredHash := '';
-  membershipPricePlanChanges := TObjectList.Create(False);
+  planChanges := TObjectList.Create(False);
 end;
 
 procedure TForm1.freeMemoryUsage();
@@ -506,12 +506,12 @@ var
   i: integer;
   P: PItem;
 begin
-  for i := 0 to membershipCostPlanList.Items.Count - 1 do
+  for i := 0 to planList.Items.Count - 1 do
   begin
-    P := PItem(membershipCostPlanList.Items[i].Data);
+    P := PItem(planList.Items[i].Data);
     Dispose(P);
   end;
-  membershipCostPlanList.Clear;
+  planList.Clear;
 
   for i := 0 to members.Items.Count - 1 do
   begin
@@ -520,12 +520,12 @@ begin
   end;
   members.Clear;
 
-  for i := 0 to bankAccountMovements.Items.Count - 1 do
+  for i := 0 to bankList.Items.Count - 1 do
   begin
-    P := PItem(bankAccountMovements.Items[i].Data);
+    P := PItem(bankList.Items[i].Data);
     Dispose(P);
   end;
-  bankAccountMovements.Clear;
+  bankList.Clear;
 
   for i := 0 to cashList.Items.Count - 1 do
   begin
@@ -535,12 +535,12 @@ begin
   cashList.Clear;
 
 
-  for i := 0 to membershipPricePlanChanges.Count - 1 do
+  for i := 0 to planChanges.Count - 1 do
   begin
-    P := PItem(membershipPricePlanChanges.Items[i]);
+    P := PItem(planChanges.Items[i]);
     Dispose(P);
   end;
-  membershipPricePlanChanges.Clear;
+  planChanges.Clear;
 end;
 
 procedure TForm1.BitBtn2Click(Sender: TObject);
@@ -650,9 +650,9 @@ end;
 procedure TForm1.cloneBankMoveClick(Sender: TObject);
 var clone, old : PItem;
 begin
-  if bankAccountMovements.ItemIndex > -1 then
+  if bankList.ItemIndex > -1 then
   begin
-    old := PItem(bankAccountMovements.Items[bankAccountMovements.ItemIndex].Data);
+    old := PItem(bankList.Items[bankList.ItemIndex].Data);
     new(clone);
     FillChar(clone^, SizeOf(TDataset), 0);
     clone^.typ := old^.typ;
@@ -663,7 +663,7 @@ begin
     clone^.bankRecipient := old^.bankRecipient;
     clone^.bankExecutionDate := old^.bankExecutionDate;
     clone^.bankMovementChecked:=false;
-    paintEntry(bankAccountMovements.Items.Add, clone);
+    paintEntry(bankList.Items.Add, clone);
     recalculateAllCaptions;
     recalculateDirtyFlag
   end;
@@ -694,11 +694,11 @@ begin
 end;
 
 
-procedure TForm1.bankAccountMovementsSelectItem(Sender: TObject; Item: TListItem; Selected: boolean);
+procedure TForm1.bankListSelectItem(Sender: TObject; Item: TListItem; Selected: boolean);
 var
   enable: boolean;
 begin
-  enable := bankAccountMovements.ItemIndex > -1;
+  enable := bankList.ItemIndex > -1;
   bankDesc.Enabled := enable;
   bankChange.Enabled := enable;
   bankRecipient.Enabled := enable;
@@ -722,7 +722,7 @@ begin
     bankChecked.Checked := False;
   end
   else
-    with PItem(bankAccountMovements.Items[bankAccountMovements.ItemIndex].Data)^ do
+    with PItem(bankList.Items[bankList.ItemIndex].Data)^ do
     begin
       bankChange.Text := FormatFloat(AMOUNT_FORMAT, bankChangeCent / 100);
       form1.bankDesc.Text := bankDesc;
@@ -744,9 +744,9 @@ begin
   MembershipChangeForm.limit(memberno.Text);
 
   MembershipChangeForm.membershipChangeAvailableCostPlanList.Clear;
-  for i := 0 to membershipCostPlanList.Items.Count-1 do
+  for i := 0 to planList.Items.Count-1 do
   begin
-    MembershipChangeForm.membershipChangeAvailableCostPlanList.Items.AddObject(membershipCostPlanList.Items[i].Caption, TObject(membershipCostPlanList.Items[i].Data));
+    MembershipChangeForm.membershipChangeAvailableCostPlanList.Items.AddObject(planList.Items[i].Caption, TObject(planList.Items[i].Data));
   end;
 
   if MembershipChangeForm.ShowModal = mrOK then
@@ -757,12 +757,12 @@ begin
     MembershipChangeForm.fill(newChange^.changedSince, TObject(plan));
     newChange^.newPricePlan := plan^.id;
     newChange^.memberNumber := memberno.Text;
-    membershipPricePlanChanges.Add(TObject(newChange));
+    planChanges.Add(TObject(newChange));
     xname:='Unbenannt';
-    for i := 0 to membershipCostPlanList.Items.Count-1 do
+    for i := 0 to planList.Items.Count-1 do
     begin
-      if PItem(membershipCostPlanList.Items[i].Data)^.id.ToString(true) = newChange^.newPricePlan.ToString(true) then
-        xname := PItem(membershipCostPlanList.Items[i].Data)^.membershipCostName;
+      if PItem(planList.Items[i].Data)^.id.ToString(true) = newChange^.newPricePlan.ToString(true) then
+        xname := PItem(planList.Items[i].Data)^.membershipCostName;
     end;
     memberMemo.Text:=memberMemo.Text + LineEnding+ 'Beitragssatz seit ' + FormatDateTime('mm.yyyy', newChange^.changedSince)+': '+xname;
     recalculateDirtyFlag
@@ -790,10 +790,10 @@ end;
 
 procedure TForm1.bankChangeChange(Sender: TObject);
 begin
-  if bankAccountMovements.ItemIndex > -1 then
+  if bankList.ItemIndex > -1 then
   begin
-    PItem(bankAccountMovements.Items[bankAccountMovements.ItemIndex].Data)^.bankChangeCent := Round(StrToFloat(bankChange.Text) * 100);
-    paintEntry(bankAccountMovements.Items[bankAccountMovements.ItemIndex], PItem(bankAccountMovements.Items[bankAccountMovements.ItemIndex].Data));
+    PItem(bankList.Items[bankList.ItemIndex].Data)^.bankChangeCent := Round(StrToFloat(bankChange.Text) * 100);
+    paintEntry(bankList.Items[bankList.ItemIndex], PItem(bankList.Items[bankList.ItemIndex].Data));
     recalculateAllCaptions();
     recalculateDirtyFlag
   end;
@@ -801,30 +801,30 @@ end;
 
 procedure TForm1.bankCheckedChange(Sender: TObject);
 begin
-  if bankAccountMovements.ItemIndex > -1 then
+  if bankList.ItemIndex > -1 then
   begin
-    PItem(bankAccountMovements.Items[bankAccountMovements.ItemIndex].Data)^.bankMovementChecked := bankChecked.Checked;
-    paintEntry(bankAccountMovements.Items[bankAccountMovements.ItemIndex], PItem(bankAccountMovements.Items[bankAccountMovements.ItemIndex].Data));
+    PItem(bankList.Items[bankList.ItemIndex].Data)^.bankMovementChecked := bankChecked.Checked;
+    paintEntry(bankList.Items[bankList.ItemIndex], PItem(bankList.Items[bankList.ItemIndex].Data));
     recalculateDirtyFlag
   end;
 end;
 
 procedure TForm1.bankCommentChange(Sender: TObject);
 begin
-  if bankAccountMovements.ItemIndex > -1 then
+  if bankList.ItemIndex > -1 then
   begin
-    StrPLCopy(PItem(bankAccountMovements.Items[bankAccountMovements.ItemIndex].Data)^.bankRemarks, bankComment.Text, REMARK_SIZE);
-    paintEntry(bankAccountMovements.Items[bankAccountMovements.ItemIndex], PItem(bankAccountMovements.Items[bankAccountMovements.ItemIndex].Data));
+    StrPLCopy(PItem(bankList.Items[bankList.ItemIndex].Data)^.bankRemarks, bankComment.Text, REMARK_SIZE);
+    paintEntry(bankList.Items[bankList.ItemIndex], PItem(bankList.Items[bankList.ItemIndex].Data));
     recalculateDirtyFlag
   end;
 end;
 
 procedure TForm1.bankDescChange(Sender: TObject);
 begin
-  if bankAccountMovements.ItemIndex > -1 then
+  if bankList.ItemIndex > -1 then
   begin
-    PItem(bankAccountMovements.Items[bankAccountMovements.ItemIndex].Data)^.bankDesc := bankDesc.Text;
-    paintEntry(bankAccountMovements.Items[bankAccountMovements.ItemIndex], PItem(bankAccountMovements.Items[bankAccountMovements.ItemIndex].Data));
+    PItem(bankList.Items[bankList.ItemIndex].Data)^.bankDesc := bankDesc.Text;
+    paintEntry(bankList.Items[bankList.ItemIndex], PItem(bankList.Items[bankList.ItemIndex].Data));
     recalculateDirtyFlag
   end;
 end;
@@ -832,30 +832,30 @@ end;
 procedure TForm1.bankExecutionDateChange(Sender: TObject);
 var t: TDateTime;
 begin
-  if (bankAccountMovements.ItemIndex > -1) AND (tryStrToDateTime(bankExecutionDate.Text,t)) then
+  if (bankList.ItemIndex > -1) AND (tryStrToDateTime(bankExecutionDate.Text,t)) then
   begin
-    PItem(bankAccountMovements.Items[bankAccountMovements.ItemIndex].Data)^.bankExecutionDate := t;
-    paintEntry(bankAccountMovements.Items[bankAccountMovements.ItemIndex], PItem(bankAccountMovements.Items[bankAccountMovements.ItemIndex].Data));
+    PItem(bankList.Items[bankList.ItemIndex].Data)^.bankExecutionDate := t;
+    paintEntry(bankList.Items[bankList.ItemIndex], PItem(bankList.Items[bankList.ItemIndex].Data));
     recalculateDirtyFlag
   end;
 end;
 
 procedure TForm1.bankMovementNoChange(Sender: TObject);
 begin
-  if bankAccountMovements.ItemIndex > -1 then
+  if bankList.ItemIndex > -1 then
   begin
-    PItem(bankAccountMovements.Items[bankAccountMovements.ItemIndex].Data)^.bankMovementNo := bankMovementNo.Text;
-    paintEntry(bankAccountMovements.Items[bankAccountMovements.ItemIndex], PItem(bankAccountMovements.Items[bankAccountMovements.ItemIndex].Data));
+    PItem(bankList.Items[bankList.ItemIndex].Data)^.bankMovementNo := bankMovementNo.Text;
+    paintEntry(bankList.Items[bankList.ItemIndex], PItem(bankList.Items[bankList.ItemIndex].Data));
     recalculateDirtyFlag
   end;
 end;
 
 procedure TForm1.bankRecipientChange(Sender: TObject);
 begin
-  if bankAccountMovements.ItemIndex > -1 then
+  if bankList.ItemIndex > -1 then
   begin
-    PItem(bankAccountMovements.Items[bankAccountMovements.ItemIndex].Data)^.bankRecipient := bankRecipient.Text;
-    paintEntry(bankAccountMovements.Items[bankAccountMovements.ItemIndex], PItem(bankAccountMovements.Items[bankAccountMovements.ItemIndex].Data));
+    PItem(bankList.Items[bankList.ItemIndex].Data)^.bankRecipient := bankRecipient.Text;
+    paintEntry(bankList.Items[bankList.ItemIndex], PItem(bankList.Items[bankList.ItemIndex].Data));
     recalculateDirtyFlag
   end;
 end;
@@ -885,14 +885,14 @@ begin
     Write(f, PItem(members.Items[i].Data)^);
   end;
 
-  for i := 0 to membershipCostPlanList.Items.Count - 1 do
+  for i := 0 to planList.Items.Count - 1 do
   begin
-    Write(f, PItem(membershipCostPlanList.Items[i].Data)^);
+    Write(f, PItem(planList.Items[i].Data)^);
   end;
 
-  for i := 0 to bankAccountMovements.Items.Count - 1 do
+  for i := 0 to bankList.Items.Count - 1 do
   begin
-    Write(f, PItem(bankAccountMovements.Items[i].Data)^);
+    Write(f, PItem(bankList.Items[i].Data)^);
   end;
 
   for i := 0 to cashList.Items.Count - 1 do
@@ -900,9 +900,9 @@ begin
     Write(f, PItem(cashList.Items[i].Data)^);
   end;
 
-  for i := 0 to membershipPricePlanChanges.Count - 1 do
+  for i := 0 to planChanges.Count - 1 do
   begin
-    Write(f, PItem(membershipPricePlanChanges.Items[i])^);
+    Write(f, PItem(planChanges.Items[i])^);
   end;
   CloseFile(f);
   lastStoredHash := CalculateDataHash; // we need this in order to mark the file as unchanged
@@ -914,7 +914,7 @@ end;
 procedure TForm1.FormDestroy(Sender: TObject);
 begin
   freeMemoryUsage();
-  membershipPricePlanChanges.Free;
+  planChanges.Free;
 end;
 
 
@@ -963,17 +963,17 @@ begin
         paintEntry(members.Items.Add, p);
       if p^.Typ = rtMembershipCostPlan then
       begin
-        paintEntry(membershipCostPlanList.Items.Add, p);
+        paintEntry(planList.Items.Add, p);
         MembershipChangeForm.membershipChangeAvailableCostPlanList.Items.AddObject(p^.membershipCostName, TObject(p));
         recalculateMembershipCostPlan();
       end;
       if p^.Typ = rtBankAccountMovement then
-        paintEntry(bankAccountMovements.Items.Add, p);
+        paintEntry(bankList.Items.Add, p);
       if p^.Typ = rtCashRegisterMovement then
         paintEntry(cashList.Items.Add, p);
       if p^.Typ = rtMembershipChange then
       begin
-        membershipPricePlanChanges.add(TObject(p));
+        planChanges.add(TObject(p));
       end;
     end;
     CloseFile(f);
@@ -996,7 +996,7 @@ end;
 
 procedure TForm1.FormActivate(Sender: TObject);
 begin
-  membershipCostPlanListSelectItem(self, nil, False);
+  planListSelectItem(self, nil, False);
   updateMemberForm(self, nil, False);
 end;
 
@@ -1140,12 +1140,12 @@ begin
     no := PItem(members.Items[members.ItemIndex].Data)^.number;
     Dispose(PItem(members.Items[members.ItemIndex].Data));
     members.items[members.ItemIndex].Delete;
-    for i := membershipPricePlanChanges.Count -1 downto 0 do
+    for i := planChanges.Count -1 downto 0 do
     begin
-      if PItem(membershipPricePlanChanges.Items[i])^.memberNumber = no then
+      if PItem(planChanges.Items[i])^.memberNumber = no then
       begin
-        Dispose(PItem(membershipPricePlanChanges.Items[i]));
-        membershipPricePlanChanges.Delete(i);
+        Dispose(PItem(planChanges.Items[i]));
+        planChanges.Delete(i);
       end;
     end;
     recalculateDirtyFlag
@@ -1154,26 +1154,26 @@ end;
 
 procedure TForm1.membershipCostPlanAgeChange(Sender: TObject);
 begin
-  if (membershipCostPlanList.ItemIndex > -1) and IsInt(membershipCostPlanAge.Text) then
+  if (planList.ItemIndex > -1) and IsInt(membershipCostPlanAge.Text) then
   begin
-    PItem(membershipCostPlanList.Items[membershipCostPlanList.ItemIndex].Data)^.ageFrom := StrToInt(membershipCostPlanAge.Text);
-    paintEntry(membershipCostPlanList.Items[membershipCostPlanList.ItemIndex], PItem(membershipCostPlanList.Items[membershipCostPlanList.ItemIndex].Data));
+    PItem(planList.Items[planList.ItemIndex].Data)^.ageFrom := StrToInt(membershipCostPlanAge.Text);
+    paintEntry(planList.Items[planList.ItemIndex], PItem(planList.Items[planList.ItemIndex].Data));
     recalculateDirtyFlag
   end;
 end;
 
 procedure TForm1.membershipCostPlanAmountChange(Sender: TObject);
 begin
-  if (membershipCostPlanList.ItemIndex > -1) and IsFloat(membershipCostPlanAmount.Text) then
+  if (planList.ItemIndex > -1) and IsFloat(membershipCostPlanAmount.Text) then
   begin
-    PItem(membershipCostPlanList.Items[membershipCostPlanList.ItemIndex].Data)^.planAmountCent := Round(StrToFloat(membershipCostPlanAmount.Text) * 100);
-    paintEntry(membershipCostPlanList.Items[membershipCostPlanList.ItemIndex], PItem(membershipCostPlanList.Items[membershipCostPlanList.ItemIndex].Data));
+    PItem(planList.Items[planList.ItemIndex].Data)^.planAmountCent := Round(StrToFloat(membershipCostPlanAmount.Text) * 100);
+    paintEntry(planList.Items[planList.ItemIndex], PItem(planList.Items[planList.ItemIndex].Data));
     recalculateDirtyFlag
   end;
 
 end;
 
-procedure TForm1.membershipCostPlanListChange(Sender: TObject; Item: TListItem; Change: TItemChange);
+procedure TForm1.planListChange(Sender: TObject; Item: TListItem; Change: TItemChange);
 begin
   recalculateMembershipCostPlan();
 end;
@@ -1233,7 +1233,7 @@ begin
     bankMovementNo := '';
     bankMovementChecked := False;
   end;
-  paintEntry(Form1.bankAccountMovements.Items.Add, newItem);
+  paintEntry(Form1.bankList.Items.Add, newItem);
   Form1.recalculateAllCaptions();
 end;
 
@@ -1315,7 +1315,7 @@ begin
   move^.bankExecutionDate :=val;
   move^.bankMovementNo:='';
   move^.bankMovementChecked:=false;
-  paintEntry(Form1.bankAccountMovements.Items.Add, move);
+  paintEntry(Form1.bankList.Items.Add, move);
 
   // einzahlung
   new(Move);
@@ -1376,7 +1376,7 @@ begin
   move^.bankExecutionDate :=val;
   move^.bankMovementNo:='';
   move^.bankMovementChecked:=false;
-  paintEntry(Form1.bankAccountMovements.Items.Add, move);
+  paintEntry(Form1.bankList.Items.Add, move);
 
   // entnahme
   new(Move);
@@ -1398,11 +1398,11 @@ procedure TForm1.removeButtonClick(Sender: TObject);
 begin
   if (objectControl.ActivePage = cashSheet) AND (cashList.ItemIndex > -1) then
     removeCashMoveClick(sender)
-  else if (objectControl.ActivePage = bankSheet) AND (bankAccountMovements.ItemIndex > -1) then
+  else if (objectControl.ActivePage = bankSheet) AND (bankList.ItemIndex > -1) then
     removeBankMovementClick(sender)
   else if (objectControl.ActivePage = memberSheet) AND (members.ItemIndex > -1) then
     memberRemoveClick(sender)
-  else if (objectControl.ActivePage = membershipCostPlan) AND (membershipCostPlanList.ItemIndex > -1) then
+  else if (objectControl.ActivePage = membershipCostPlan) AND (planList.ItemIndex > -1) then
     memberRemoveClick(sender);
 end;
 
@@ -1457,7 +1457,7 @@ begin
     if IsFloat(Value) then
     begin
       addBank(StrToFloat(Value));
-      bankAccountMovements.ItemIndex := bankAccountMovements.Items.Count - 1;
+      bankList.ItemIndex := bankList.Items.Count - 1;
       bankDesc.SetFocus;
       recalculateDirtyFlag
     end;
@@ -1466,10 +1466,10 @@ end;
 
 procedure TForm1.removeBankMovementClick(Sender: TObject);
 begin
-  if bankAccountMovements.ItemIndex > -1 then
+  if bankList.ItemIndex > -1 then
   begin
-    Dispose(PItem(bankAccountMovements.Items[bankAccountMovements.ItemIndex].Data));
-    bankAccountMovements.items[bankAccountMovements.ItemIndex].Delete;
+    Dispose(PItem(bankList.Items[bankList.ItemIndex].Data));
+    bankList.items[bankList.ItemIndex].Delete;
     recalculateDirtyFlag
   end;
 end;
@@ -1591,12 +1591,12 @@ var
           PItem(cashList.Items[i].Data)^.cashAmountCentIncomming / 100;
     end;
 
-    for i := 0 to bankAccountMovements.Items.Count-1 do
+    for i := 0 to bankList.Items.Count-1 do
     begin
-      idx := MonthIndex(PItem(bankAccountMovements.Items[i].Data)^.bankExecutionDate);
+      idx := MonthIndex(PItem(bankList.Items[i].Data)^.bankExecutionDate);
       if (idx >= 0) and (idx < totalMonths) then
         bankSeries[idx] := bankSeries[idx] +
-          PItem(bankAccountMovements.Items[i].Data)^.bankChangeCent / 100;
+          PItem(bankList.Items[i].Data)^.bankChangeCent / 100;
     end;
 
     for i := 1 to totalMonths-1 do
@@ -1838,11 +1838,11 @@ begin
 end;
 
 
-procedure TForm1.membershipCostPlanListSelectItem(Sender: TObject; Item: TListItem; Selected: boolean);
+procedure TForm1.planListSelectItem(Sender: TObject; Item: TListItem; Selected: boolean);
 var
   enable: boolean;
 begin
-  enable := membershipCostPlanList.ItemIndex > -1;
+  enable := planList.ItemIndex > -1;
   membershipCostPlanName.Enabled := enable;
   membershipCostPlanAge.Enabled := enable;
   membershipCostPlanAmount.Enabled := enable;
@@ -1854,7 +1854,7 @@ begin
   end
   else
   begin
-    with PItem(membershipCostPlanList.Items[membershipCostPlanList.ItemIndex].Data)^ do
+    with PItem(planList.Items[planList.ItemIndex].Data)^ do
     begin
       membershipCostPlanName.Text := membershipCostName;
       membershipCostPlanAge.Text := IntToStr(ageFrom);
@@ -1866,10 +1866,10 @@ end;
 
 procedure TForm1.membershipCostPlanNameChange(Sender: TObject);
 begin
-  if membershipCostPlanList.ItemIndex > -1 then
+  if planList.ItemIndex > -1 then
   begin
-    PItem(membershipCostPlanList.Items[membershipCostPlanList.ItemIndex].Data)^.membershipCostName := membershipCostPlanName.Text;
-    paintEntry(membershipCostPlanList.Items[membershipCostPlanList.ItemIndex], PItem(membershipCostPlanList.Items[membershipCostPlanList.ItemIndex].Data));
+    PItem(planList.Items[planList.ItemIndex].Data)^.membershipCostName := membershipCostPlanName.Text;
+    paintEntry(planList.Items[planList.ItemIndex], PItem(planList.Items[planList.ItemIndex].Data));
     recalculateDirtyFlag
   end;
 end;
@@ -1898,14 +1898,14 @@ begin
         newItem^.membershipCostName := mname;
         newItem^.planAmountCent := Round(StrToFloat(amount) * 100);
         uuid_create(newItem^.id);
-        with membershipCostPlanList.Items.Add do
+        with planList.Items.Add do
         begin
           Data := TObject(newItem);
           Caption := newItem^.membershipCostName;
           SubItems.Add(age);
           SubItems.Add(amount);
         end;
-        membershipCostPlanList.ItemIndex := membershipCostPlanList.Items.Count - 1;
+        planList.ItemIndex := planList.Items.Count - 1;
         membershipCostPlanName.SetFocus;
         recalculateDirtyFlag
       end;
@@ -1994,14 +1994,14 @@ begin
     p := PItem(members.Items[i].Data);
     UpdateMember(p);
   end;
-  for i := 0 to membershipCostPlanList.Items.Count - 1 do
+  for i := 0 to planList.Items.Count - 1 do
   begin
-    p := PItem(membershipCostPlanList.Items[i].Data);
+    p := PItem(planList.Items[i].Data);
     UpdateMembershipCostPlan(p);
   end;
-  for i := 0 to bankAccountMovements.Items.Count - 1 do
+  for i := 0 to bankList.Items.Count - 1 do
   begin
-    p := PItem(bankAccountMovements.Items[i].Data);
+    p := PItem(bankList.Items[i].Data);
     UpdateBankMovement(p);
   end;
   for i := 0 to cashList.Items.Count - 1 do
@@ -2009,9 +2009,9 @@ begin
     p := PItem(cashList.Items[i].Data);
     UpdateCashMovement(p);
   end;
-  for i := 0 to membershipPricePlanChanges.Count - 1 do
+  for i := 0 to planChanges.Count - 1 do
   begin
-    p := PItem(membershipPricePlanChanges[i]);
+    p := PItem(planChanges[i]);
     UpdateMembershipChange(p);
   end;
   MD5Final(ctx, digest);
@@ -2036,11 +2036,11 @@ begin
   if objectControl.ActivePage = cashSheet then
     enable := cashList.ItemIndex > -1
   else if objectControl.ActivePage = bankSheet then
-    enable := bankAccountMovements.ItemIndex > -1
+    enable := bankList.ItemIndex > -1
   else if objectControl.ActivePage = memberSheet then
     enable := members.ItemIndex > -1
   else if objectControl.ActivePage = membershipCostPlan then
-    enable := membershipCostPlanList.ItemIndex > -1;
+    enable := planList.ItemIndex > -1;
   addButton.Enabled:=not enable;
   removeButton.Enabled:=enable;
 end;
