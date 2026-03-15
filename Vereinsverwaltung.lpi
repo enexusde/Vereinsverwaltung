@@ -61,6 +61,15 @@
         <Filename Value="versioninfo.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
+      <Unit>
+        <Filename Value="cryptounit.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="CryptoUnit"/>
+      </Unit>
+      <Unit>
+        <Filename Value="sodium.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

@@ -10,7 +10,7 @@ uses
   athreads,
   {$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, vereinswindowmain, beitragssatzaenderung
+  Forms, vereinswindowmain, beitragssatzaenderung, CryptoUnit, sodium
   { you can add units after this };
 
 {$R *.res}

@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, ExtCtrls, MD5,
-  Windows,
+  Windows, CryptoUnit,
   StdCtrls, Buttons, Menus, uuid, beitragssatzaenderung, DateUtils, Contnrs, math;
 
 const
@@ -167,6 +167,7 @@ type
   public
     planChanges: TObjectList;
     filename: String;
+    password: String;
     lastStoredHash: String;
     procedure recalculateAllCaptions();
     procedure recalculateDirtyFlag();
@@ -497,6 +498,7 @@ procedure TForm1.FormCreate(Sender: TObject);
 begin
   Caption := 'Vereinsverwaltung ' + GetAppVersion;
   filename := '';
+  password := '';
   lastStoredHash := '';
   planChanges := TObjectList.Create(False);
 end;
@@ -870,47 +872,6 @@ begin
 
 end;
 
-procedure TForm1.fileSaveClick(Sender: TObject);
-var
-  f: file of TDataset;
-  Data: TDataset;
-  i: integer;
-  p: PItem;
-begin
-  AssignFile(f, filename);
-  Rewrite(f);
-
-  for i := 0 to members.Items.Count - 1 do
-  begin
-    Write(f, PItem(members.Items[i].Data)^);
-  end;
-
-  for i := 0 to planList.Items.Count - 1 do
-  begin
-    Write(f, PItem(planList.Items[i].Data)^);
-  end;
-
-  for i := 0 to bankList.Items.Count - 1 do
-  begin
-    Write(f, PItem(bankList.Items[i].Data)^);
-  end;
-
-  for i := 0 to cashList.Items.Count - 1 do
-  begin
-    Write(f, PItem(cashList.Items[i].Data)^);
-  end;
-
-  for i := 0 to planChanges.Count - 1 do
-  begin
-    Write(f, PItem(planChanges.Items[i])^);
-  end;
-  CloseFile(f);
-  lastStoredHash := CalculateDataHash; // we need this in order to mark the file as unchanged
-  recalculateAllCaptions;
-  newButton.enabled := true;
-  recalculateDirtyFlag;
-end;
-
 procedure TForm1.FormDestroy(Sender: TObject);
 begin
   freeMemoryUsage();
@@ -945,44 +906,92 @@ end;
 
 procedure TForm1.openFileButtonClick(Sender: TObject);
 var
-  f: file of TDataset;
+  ms: TMemoryStream;
   p: PItem;
 begin
   loadFileDialog.filename:='';
   if loadFileDialog.Execute then
   begin
-    freeMemoryUsage(); // alte Items freigeben
-    AssignFile(f, loadFileDialog.FileName);
-    Reset(f);
-    while not EOF(f) do
-    begin
-      New(p);
-      FillChar(p^, SizeOf(TDataset), 0);
-      Read(f, p^);
-      if p^.Typ = rtMember then
-        paintEntry(members.Items.Add, p);
-      if p^.Typ = rtMembershipCostPlan then
-      begin
-        paintEntry(planList.Items.Add, p);
-        MembershipChangeForm.membershipChangeAvailableCostPlanList.Items.AddObject(p^.membershipCostName, TObject(p));
-        recalculateMembershipCostPlan();
+    if password = '' then
+      DefaultInputDialog('Passwort', 'Wie lautet das Passwort?', true, password);
+    ms := TMemoryStream.Create;
+    try
+      try
+        DecryptFileToStream(loadFileDialog.FileName, password, ms);
+      except
+        on E: Exception do
+        begin
+          QuestionDlg('Falsches Passwort', 'Sie haben ein falsches Passwort eingegeben! Ich kann die Datei nicht laden.', mtError, [mrCancel, 'Abbrechen'], '');
+          exit;
+        end;
       end;
-      if p^.Typ = rtBankAccountMovement then
-        paintEntry(bankList.Items.Add, p);
-      if p^.Typ = rtCashRegisterMovement then
-        paintEntry(cashList.Items.Add, p);
-      if p^.Typ = rtMembershipChange then
+
+      freeMemoryUsage();
+      while ms.Position < ms.Size do
       begin
-        planChanges.add(TObject(p));
+        New(p);
+        FillChar(p^, SizeOf(TDataset), 0);
+        ms.ReadBuffer(p^, SizeOf(TDataset));
+        if p^.Typ = rtMember then
+          paintEntry(members.Items.Add, p);
+        if p^.Typ = rtMembershipCostPlan then
+        begin
+          paintEntry(planList.Items.Add, p);
+          MembershipChangeForm.membershipChangeAvailableCostPlanList
+            .Items.AddObject(p^.membershipCostName, TObject(p));
+        end;
+        if p^.Typ = rtBankAccountMovement then
+          paintEntry(bankList.Items.Add, p);
+        if p^.Typ = rtCashRegisterMovement then
+          paintEntry(cashList.Items.Add, p);
+        if p^.Typ = rtMembershipChange then
+          planChanges.Add(TObject(p));
       end;
+
+    finally
+      ms.Free;
     end;
-    CloseFile(f);
     filename := loadFileDialog.FileName;
     recalculateAllCaptions();
     lastStoredHash := CalculateDataHash;
     newButton.enabled := true;
     loadFileDialog.FileName:='';
   end;
+end;
+
+procedure TForm1.fileSaveClick(Sender: TObject);
+var
+  f: file of TDataset;
+  Data: TDataset;
+  p: PItem;
+
+  ms: TMemoryStream;
+  i: integer;
+begin
+  if password = '' then
+    DefaultInputDialog('Passwort', 'Sie haben kein Passwort angegeben.'+LineEnding+'Das ist potentiell gefährlich!', true, password);
+
+  ms := TMemoryStream.Create;
+  try
+    for i := 0 to members.Items.Count - 1 do
+      ms.WriteBuffer(PItem(members.Items[i].Data)^, SizeOf(TDataset));
+    for i := 0 to planList.Items.Count - 1 do
+      ms.WriteBuffer(PItem(planList.Items[i].Data)^, SizeOf(TDataset));
+    for i := 0 to bankList.Items.Count - 1 do
+      ms.WriteBuffer(PItem(bankList.Items[i].Data)^, SizeOf(TDataset));
+    for i := 0 to cashList.Items.Count - 1 do
+      ms.WriteBuffer(PItem(cashList.Items[i].Data)^, SizeOf(TDataset));
+    for i := 0 to planChanges.Count - 1 do
+      ms.WriteBuffer(PItem(planChanges.Items[i])^, SizeOf(TDataset));
+    EncryptStreamToFile(ms, filename, password);
+  finally
+    ms.Free;
+  end;
+
+  lastStoredHash := CalculateDataHash;
+  recalculateAllCaptions;
+  newButton.enabled := true;
+  recalculateDirtyFlag;
 end;
 
 procedure TForm1.fileSaveAsClick(Sender: TObject);
