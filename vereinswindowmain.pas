@@ -922,6 +922,7 @@ begin
         on E: Exception do
         begin
           QuestionDlg('Falsches Passwort', 'Sie haben ein falsches Passwort eingegeben! Ich kann die Datei nicht laden.', mtError, [mrCancel, 'Abbrechen'], '');
+          password := '';
           exit;
         end;
       end;
