@@ -1,0 +1,31 @@
+name: Integration Build Linux
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Repository auschecken
+      uses: actions/checkout@v4
+
+    - name: Lazarus installieren
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y lazarus
+
+    - name: Projekt bauen
+      run: |
+        lazbuild Vereinsverwaltung.lpi
+
+    - name: Build Artefakt hochladen
+      uses: actions/upload-artifact@v4
+      with:
+        name: linux-build
+        path: |
+          Vereinsverwaltung

@@ -7,9 +7,9 @@ on:
 
 permissions:
   contents: write
-  
+
 jobs:
-  build:
+  build-windows:
     runs-on: windows-latest
 
     steps:
@@ -34,8 +34,56 @@ jobs:
         run: |
           lazbuild Vereinsverwaltung.lpi
 
-      - name: Neue Release .exe hochladen
+      - name: Windows-Build hochladen
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-exe
+          path: Vereinsverwaltung.exe
+
+  build-linux:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v4
+
+      - name: Lazarus installieren
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y lazarus
+
+      - name: Version setzen
+        run: |
+          ver="${GITHUB_REF_NAME#v}"
+          sed -i "s/ProductVersion=\"[^\"]*\"/ProductVersion=\"$ver.0\"/" Vereinsverwaltung.lpi
+
+      - name: Projekt bauen
+        run: |
+          lazbuild Vereinsverwaltung.lpi
+
+      - name: Binary umbenennen
+        run: mv Vereinsverwaltung Vereinsverwaltung-linux-x86_64
+
+      - name: Linux-Build hochladen
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-binary
+          path: Vereinsverwaltung-linux-x86_64
+
+  release:
+    needs: [build-windows, build-linux]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Artefakte herunterladen
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Neue Release-Dateien hochladen
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            **/*.exe
+            dist/Vereinsverwaltung.exe
+            dist/Vereinsverwaltung-linux-x86_64
