@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 1112
+  Left = 274
   Height = 900
-  Top = 2615
+  Top = 265
   Width = 800
   Caption = 'Vereinsverwaltung'
   ClientHeight = 900
@@ -49,32 +49,32 @@ object Form1: TForm1
     0000000000000000000000000000000000000000000000000000000000000000
     0000
   }
+  LCLVersion = '4.6.0.0'
   OnActivate = FormActivate
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnResize = FormResize
-  LCLVersion = '3.0.0.3'
   object objectControl: TPageControl
     Left = 8
     Height = 850
-    Top = 39
+    Top = 40
     Width = 784
-    ActivePage = memberSheet
+    ActivePage = membershipCostPlan
     Anchors = [akTop, akLeft, akRight, akBottom]
     Images = tabimages
-    TabIndex = 2
+    TabIndex = 4
     TabOrder = 0
     OnChange = objectControlChange
     object cashSheet: TTabSheet
       Caption = 'Barkasse'
-      ClientHeight = 818
-      ClientWidth = 774
+      ClientHeight = 822
+      ClientWidth = 776
       ImageIndex = 0
       object cashList: TListView
         Left = 8
-        Height = 480
+        Height = 568
         Top = 8
-        Width = 758
+        Width = 760
         Anchors = [akTop, akLeft, akRight, akBottom]
         Columns = <        
           item
@@ -144,11 +144,11 @@ object Form1: TForm1
       end
       object cashChangeCent: TLabeledEdit
         Left = 8
-        Height = 35
-        Top = 550
+        Height = 23
+        Top = 600
         Width = 64
         Anchors = [akLeft, akBottom]
-        EditLabel.Height = 18
+        EditLabel.Height = 15
         EditLabel.Width = 64
         EditLabel.Caption = 'Änderung:'
         Enabled = False
@@ -158,11 +158,11 @@ object Form1: TForm1
       end
       object cashMoveNo: TLabeledEdit
         Left = 80
-        Height = 35
-        Top = 550
+        Height = 23
+        Top = 600
         Width = 112
         Anchors = [akLeft, akBottom]
-        EditLabel.Height = 18
+        EditLabel.Height = 15
         EditLabel.Width = 112
         EditLabel.Caption = 'Vorgangsnummer:'
         Enabled = False
@@ -171,11 +171,11 @@ object Form1: TForm1
       end
       object cashCategory: TLabeledEdit
         Left = 8
-        Height = 35
-        Top = 608
+        Height = 23
+        Top = 649
         Width = 80
         Anchors = [akLeft, akBottom]
-        EditLabel.Height = 18
+        EditLabel.Height = 15
         EditLabel.Width = 80
         EditLabel.Caption = 'Kategorie:'
         Enabled = False
@@ -184,11 +184,11 @@ object Form1: TForm1
       end
       object cashSubject: TLabeledEdit
         Left = 96
-        Height = 35
-        Top = 608
+        Height = 23
+        Top = 649
         Width = 96
         Anchors = [akLeft, akBottom]
-        EditLabel.Height = 18
+        EditLabel.Height = 15
         EditLabel.Width = 96
         EditLabel.Caption = 'Gegenstand:'
         Enabled = False
@@ -197,11 +197,11 @@ object Form1: TForm1
       end
       object cashRecipient: TLabeledEdit
         Left = 8
-        Height = 35
-        Top = 664
+        Height = 23
+        Top = 697
         Width = 184
         Anchors = [akLeft, akBottom]
-        EditLabel.Height = 18
+        EditLabel.Height = 15
         EditLabel.Width = 184
         EditLabel.Caption = 'Gegenkasse:'
         Enabled = False
@@ -210,12 +210,12 @@ object Form1: TForm1
       end
       object cashDate: TLabeledEdit
         Left = 8
-        Height = 35
-        Top = 721
-        Width = 184
+        Height = 23
+        Top = 745
+        Width = 112
         Anchors = [akLeft, akBottom]
-        EditLabel.Height = 18
-        EditLabel.Width = 184
+        EditLabel.Height = 15
+        EditLabel.Width = 112
         EditLabel.Caption = 'Datum'
         Enabled = False
         TabOrder = 6
@@ -223,17 +223,17 @@ object Form1: TForm1
       end
       object cashCommentLabel: TLabel
         Left = 200
-        Height = 18
-        Top = 530
-        Width = 84
+        Height = 15
+        Top = 583
+        Width = 66
         Anchors = [akLeft, akBottom]
         Caption = 'Kommentar:'
       end
       object cashDescription: TMemo
         Left = 200
-        Height = 262
-        Top = 550
-        Width = 316
+        Height = 216
+        Top = 600
+        Width = 318
         Anchors = [akLeft, akRight, akBottom]
         Enabled = False
         TabOrder = 7
@@ -241,11 +241,11 @@ object Form1: TForm1
       end
       object cashShortDescription: TLabeledEdit
         Left = 8
-        Height = 35
-        Top = 777
+        Height = 23
+        Top = 793
         Width = 184
         Anchors = [akLeft, akBottom]
-        EditLabel.Height = 18
+        EditLabel.Height = 15
         EditLabel.Width = 184
         EditLabel.Caption = 'Kurzbeschreibung'
         Enabled = False
@@ -254,28 +254,27 @@ object Form1: TForm1
       end
       object Label1: TLabel
         Left = 528
-        Height = 18
-        Top = 530
-        Width = 53
+        Height = 15
+        Top = 583
+        Width = 41
         Anchors = [akRight, akBottom]
         Caption = 'Historie'
       end
       object cashHistory: TListBox
-        Left = 526
-        Height = 262
-        Top = 550
+        Left = 528
+        Height = 215
+        Top = 601
         Width = 238
         Anchors = [akRight, akBottom]
         Enabled = False
         ItemHeight = 0
         TabOrder = 9
-        TopIndex = -1
       end
       object cashChecked: TCheckBox
-        Left = 122
-        Height = 23
-        Top = 699
-        Width = 83
+        Left = 131
+        Height = 19
+        Top = 744
+        Width = 61
         Anchors = [akLeft, akBottom]
         Caption = 'Geprüft:'
         Enabled = False
@@ -285,14 +284,14 @@ object Form1: TForm1
     end
     object bankSheet: TTabSheet
       Caption = 'Bankkonto'
-      ClientHeight = 818
-      ClientWidth = 774
+      ClientHeight = 822
+      ClientWidth = 776
       ImageIndex = 1
       object bankList: TListView
         Left = 8
-        Height = 624
+        Height = 664
         Top = 8
-        Width = 758
+        Width = 760
         Anchors = [akTop, akLeft, akRight, akBottom]
         Columns = <        
           item
@@ -353,11 +352,11 @@ object Form1: TForm1
       end
       object bankDesc: TLabeledEdit
         Left = 8
-        Height = 35
-        Top = 656
+        Height = 23
+        Top = 696
         Width = 328
         Anchors = [akLeft, akBottom]
-        EditLabel.Height = 18
+        EditLabel.Height = 15
         EditLabel.Width = 328
         EditLabel.Caption = 'Kurzbeschreibung:'
         TabOrder = 1
@@ -365,11 +364,11 @@ object Form1: TForm1
       end
       object bankChange: TLabeledEdit
         Left = 8
-        Height = 35
-        Top = 714
+        Height = 23
+        Top = 741
         Width = 80
         Anchors = [akLeft, akBottom]
-        EditLabel.Height = 18
+        EditLabel.Height = 15
         EditLabel.Width = 80
         EditLabel.Caption = 'Änderung:'
         TabOrder = 2
@@ -377,11 +376,11 @@ object Form1: TForm1
       end
       object bankRecipient: TLabeledEdit
         Left = 96
-        Height = 35
-        Top = 714
+        Height = 23
+        Top = 741
         Width = 240
         Anchors = [akLeft, akBottom]
-        EditLabel.Height = 18
+        EditLabel.Height = 15
         EditLabel.Width = 240
         EditLabel.Caption = 'Gegenkonto:'
         TabOrder = 3
@@ -389,21 +388,21 @@ object Form1: TForm1
       end
       object bankMovementNo: TLabeledEdit
         Left = 136
-        Height = 35
-        Top = 774
-        Width = 200
+        Height = 23
+        Top = 790
+        Width = 124
         Anchors = [akLeft, akBottom]
-        EditLabel.Height = 18
-        EditLabel.Width = 200
+        EditLabel.Height = 15
+        EditLabel.Width = 124
         EditLabel.Caption = 'Vorgangsnummer'
         TabOrder = 4
         OnChange = bankMovementNoChange
       end
       object bankChecked: TCheckBox
-        Left = 264
-        Height = 23
-        Top = 752
-        Width = 79
+        Left = 272
+        Height = 19
+        Top = 790
+        Width = 58
         Anchors = [akLeft, akBottom]
         Caption = 'Geprüft'
         TabOrder = 5
@@ -411,28 +410,28 @@ object Form1: TForm1
       end
       object bankCommentLabel: TLabel
         Left = 348
-        Height = 18
-        Top = 637
-        Width = 84
+        Height = 15
+        Top = 679
+        Width = 66
         Anchors = [akLeft, akBottom]
         Caption = 'Kommentar:'
       end
       object bankComment: TMemo
         Left = 348
-        Height = 153
-        Top = 656
-        Width = 416
+        Height = 117
+        Top = 696
+        Width = 418
         Anchors = [akLeft, akRight, akBottom]
         TabOrder = 6
         OnChange = bankCommentChange
       end
       object bankExecutionDate: TLabeledEdit
         Left = 8
-        Height = 35
-        Top = 774
+        Height = 23
+        Top = 790
         Width = 118
         Anchors = [akLeft, akBottom]
-        EditLabel.Height = 18
+        EditLabel.Height = 15
         EditLabel.Width = 118
         EditLabel.Caption = 'Ausführungsdatum:'
         TabOrder = 7
@@ -441,14 +440,14 @@ object Form1: TForm1
     end
     object memberSheet: TTabSheet
       Caption = 'Mitglieder'
-      ClientHeight = 818
-      ClientWidth = 774
+      ClientHeight = 822
+      ClientWidth = 776
       ImageIndex = 2
       object members: TListView
         Left = 8
-        Height = 504
+        Height = 592
         Top = 8
-        Width = 758
+        Width = 760
         Anchors = [akTop, akLeft, akRight, akBottom]
         Columns = <        
           item
@@ -493,7 +492,7 @@ object Form1: TForm1
             Caption = 'Beitragssatz'
             MaxWidth = 200
             MinWidth = 80
-            Width = 139
+            Width = 80
           end>
         ColumnClick = False
         GridLines = True
@@ -507,36 +506,36 @@ object Form1: TForm1
         OnSelectItem = updateMemberForm
       end
       object memberno: TLabeledEdit
-        Left = 8
-        Height = 35
-        Top = 540
+        Left = 10
+        Height = 23
+        Top = 625
         Width = 142
         Anchors = [akLeft, akBottom]
-        EditLabel.Height = 18
+        EditLabel.Height = 15
         EditLabel.Width = 142
         EditLabel.Caption = 'Nummer:'
         TabOrder = 1
         OnChange = memberChangeNumber
       end
       object membershipfee: TLabeledEdit
-        Left = 8
-        Height = 35
-        Top = 599
+        Left = 10
+        Height = 23
+        Top = 671
         Width = 142
         Anchors = [akLeft, akBottom]
-        EditLabel.Height = 18
+        EditLabel.Height = 15
         EditLabel.Width = 142
         EditLabel.Caption = 'Beitragshöhe:'
         TabOrder = 2
         OnChange = membershipfeeChange
       end
       object memberLastContact: TLabeledEdit
-        Left = 8
-        Height = 35
-        Top = 657
+        Left = 10
+        Height = 23
+        Top = 713
         Width = 142
         Anchors = [akLeft, akBottom]
-        EditLabel.Height = 18
+        EditLabel.Height = 15
         EditLabel.Width = 142
         EditLabel.Caption = 'Letzter Kontakt:'
         TabOrder = 3
@@ -544,8 +543,8 @@ object Form1: TForm1
       end
       object memberContactState: TCheckGroup
         Left = 160
-        Height = 291
-        Top = 520
+        Height = 207
+        Top = 608
         Width = 324
         Anchors = [akLeft, akBottom]
         AutoFill = True
@@ -558,8 +557,8 @@ object Form1: TForm1
         ChildSizing.ShrinkVertical = crsScaleChilds
         ChildSizing.Layout = cclLeftToRightThenTopToBottom
         ChildSizing.ControlsPerLine = 2
-        ClientHeight = 272
-        ClientWidth = 322
+        ClientHeight = 187
+        ClientWidth = 320
         Columns = 2
         Items.Strings = (
           'Jahreshauptversamlung'
@@ -574,56 +573,56 @@ object Form1: TForm1
           'Kontaktperson'
           'Newsletter Empfänger'
         )
-        OnItemClick = memberContactStateItemClick
         TabOrder = 4
+        OnItemClick = memberContactStateItemClick
         Data = {
           0B0000000202020202020202020202
         }
       end
       object memberMemo: TMemo
         Left = 496
-        Height = 268
-        Top = 544
-        Width = 270
+        Height = 191
+        Top = 625
+        Width = 272
         Anchors = [akLeft, akRight, akBottom]
         TabOrder = 5
         OnChange = memberMemoChange
       end
       object memberMemoLabel: TLabel
         Left = 496
-        Height = 18
-        Top = 520
-        Width = 281
+        Height = 15
+        Top = 608
+        Width = 222
         Anchors = [akLeft, akBottom]
         Caption = 'Kommentar (ohne private Informationen):'
       end
       object memberContactPerson: TLabeledEdit
-        Left = 8
-        Height = 35
-        Top = 716
+        Left = 10
+        Height = 23
+        Top = 753
         Width = 142
         Anchors = [akLeft, akBottom]
-        EditLabel.Height = 18
+        EditLabel.Height = 15
         EditLabel.Width = 142
         EditLabel.Caption = 'Kontaktperson:'
         TabOrder = 6
         OnChange = memberContactPersonChange
       end
       object memberMembershipCostPlanLabel: TLabel
-        Left = 10
-        Height = 18
-        Top = 757
-        Width = 86
+        Left = 8
+        Height = 15
+        Top = 777
+        Width = 65
         Anchors = [akLeft, akBottom]
         Caption = 'Beitragssatz:'
       end
       object memberMembershipCostPlanCombo: TComboBox
-        Left = 8
-        Height = 34
-        Top = 776
+        Left = 10
+        Height = 23
+        Top = 793
         Width = 142
         Anchors = [akLeft, akBottom]
-        ItemHeight = 0
+        ItemHeight = 15
         Style = csDropDownList
         TabOrder = 7
         OnChange = memberMembershipCostPlanComboChange
@@ -631,14 +630,14 @@ object Form1: TForm1
     end
     object statisticSheet: TTabSheet
       Caption = 'Statistik'
-      ClientHeight = 818
-      ClientWidth = 774
+      ClientHeight = 822
+      ClientWidth = 776
       ImageIndex = 3
       object statisticGraph: TPaintBox
         Left = 8
-        Height = 805
+        Height = 809
         Top = 8
-        Width = 758
+        Width = 760
         Anchors = [akTop, akLeft, akRight, akBottom]
         OnClick = statisticGraphClick
         OnPaint = statisticGraphPaint
@@ -646,39 +645,39 @@ object Form1: TForm1
     end
     object membershipCostPlan: TTabSheet
       Caption = 'Beitragssätze'
-      ClientHeight = 818
-      ClientWidth = 774
+      ClientHeight = 822
+      ClientWidth = 776
       object membershipCostPlanName: TLabeledEdit
         Left = 8
-        Height = 35
-        Top = 776
-        Width = 578
+        Height = 23
+        Top = 792
+        Width = 580
         Anchors = [akLeft, akRight, akBottom]
-        EditLabel.Height = 18
-        EditLabel.Width = 578
+        EditLabel.Height = 15
+        EditLabel.Width = 580
         EditLabel.Caption = 'Name:'
         TabOrder = 0
         OnChange = membershipCostPlanNameChange
       end
       object membershipCostPlanAge: TLabeledEdit
-        Left = 594
-        Height = 35
-        Top = 776
+        Left = 596
+        Height = 23
+        Top = 792
         Width = 80
         Anchors = [akRight, akBottom]
-        EditLabel.Height = 18
+        EditLabel.Height = 15
         EditLabel.Width = 80
         EditLabel.Caption = 'Alter (ab):'
         TabOrder = 1
         OnChange = membershipCostPlanAgeChange
       end
       object membershipCostPlanAmount: TLabeledEdit
-        Left = 684
-        Height = 35
-        Top = 776
+        Left = 686
+        Height = 23
+        Top = 792
         Width = 80
         Anchors = [akRight, akBottom]
-        EditLabel.Height = 18
+        EditLabel.Height = 15
         EditLabel.Width = 80
         EditLabel.Caption = 'Preis:'
         TabOrder = 2
@@ -686,9 +685,9 @@ object Form1: TForm1
       end
       object planList: TListView
         Left = 8
-        Height = 740
+        Height = 760
         Top = 8
-        Width = 758
+        Width = 760
         Anchors = [akTop, akLeft, akRight, akBottom]
         Columns = <        
           item
@@ -708,7 +707,7 @@ object Form1: TForm1
             Caption = 'Preis'
             MaxWidth = 100
             MinWidth = 40
-            Width = 373
+            Width = 60
           end>
         ColumnClick = False
         GridLines = True
@@ -746,9 +745,9 @@ object Form1: TForm1
       AnchorSideLeft.Control = CoolBar1
       AnchorSideTop.Control = CoolBar1
       Left = 22
-      Height = 22
+      Height = 26
       Top = 3
-      Width = 125
+      Width = 152
       Align = alNone
       AutoSize = True
       BorderSpacing.Left = 22
@@ -760,88 +759,88 @@ object Form1: TForm1
       Transparent = True
       OnClick = fileGroupClick
       object fileSave: TSpeedButton
-        Left = 21
-        Height = 20
+        Left = 27
+        Height = 26
         Hint = 'Speichern'
         Top = 0
-        Width = 20
+        Width = 26
         AutoSize = True
         Caption = 'Speichern'
         Enabled = False
         Flat = True
         Images = toolbarIcons
         ImageIndex = 6
-        OnClick = fileSaveClick
         ShowCaption = False
         ShowHint = True
         ParentShowHint = False
+        OnClick = fileSaveClick
       end
       object fileSaveAs: TSpeedButton
-        Left = 41
-        Height = 22
+        Left = 53
+        Height = 26
         Hint = 'Speichern unter ...'
         Top = 0
-        Width = 36
+        Width = 39
         AutoSize = True
         Caption = '...'
         Flat = True
         Images = toolbarIcons
         ImageIndex = 6
-        OnClick = fileSaveAsClick
         ShowHint = True
         ParentShowHint = False
+        OnClick = fileSaveAsClick
       end
       object openFileButton: TSpeedButton
-        Left = 77
-        Height = 20
+        Left = 92
+        Height = 26
         Hint = 'Öffnen ...'
         Top = 0
-        Width = 20
+        Width = 26
         AutoSize = True
         Caption = 'Öffnen ...'
         Flat = True
         Images = toolbarIcons
         ImageIndex = 7
-        OnClick = openFileButtonClick
         ShowCaption = False
         ShowHint = True
         ParentShowHint = False
+        OnClick = openFileButtonClick
       end
       object BitBtn2: TSpeedButton
-        Left = 105
-        Height = 20
+        Left = 126
+        Height = 26
         Hint = 'Beenden'
         Top = 0
-        Width = 20
+        Width = 26
         AutoSize = True
         Caption = 'Beenden'
         Flat = True
         Images = toolbarIcons
         ImageIndex = 8
-        OnClick = BitBtn2Click
         ShowCaption = False
         ShowHint = True
         ParentShowHint = False
+        OnClick = BitBtn2Click
       end
       object newButton: TSpeedButton
         Left = 1
-        Height = 20
+        Height = 26
         Hint = 'Neue Verwaltung'
         Top = 0
-        Width = 20
+        Width = 26
         AutoSize = True
         Caption = 'ToolButton1'
         Enabled = False
         Flat = True
         Images = toolbarIcons
         ImageIndex = 10
-        OnClick = newButtonClick
         ShowCaption = False
         ShowHint = True
         ParentShowHint = False
+        OnClick = newButtonClick
       end
       object ToolButton2: TToolButton
-        Left = 97
+        Left = 118
         Height = 22
         Top = 0
         Caption = 'ToolButton2'
@@ -852,9 +851,9 @@ object Form1: TForm1
       AnchorSideLeft.Control = CoolBar1
       AnchorSideTop.Control = CoolBar1
       Left = 201
-      Height = 20
+      Height = 26
       Top = 3
-      Width = 41
+      Width = 53
       Align = alNone
       AutoSize = True
       BorderSpacing.Left = 201
@@ -865,35 +864,35 @@ object Form1: TForm1
       TabOrder = 1
       object addButton: TSpeedButton
         Left = 1
-        Height = 20
+        Height = 26
         Hint = 'Hinzufügen ...'
         Top = 0
-        Width = 20
+        Width = 26
         AutoSize = True
         Enabled = False
         Flat = True
         Images = popupIcons
         ImageIndex = 0
-        OnClick = addButtonClick
         ShowCaption = False
         ShowHint = True
         ParentShowHint = False
+        OnClick = addButtonClick
       end
       object removeButton: TSpeedButton
-        Left = 21
-        Height = 20
+        Left = 27
+        Height = 26
         Hint = 'Entfernen ...'
         Top = 0
-        Width = 20
+        Width = 26
         AutoSize = True
         Enabled = False
         Flat = True
         Images = popupIcons
         ImageIndex = 1
-        OnClick = removeButtonClick
         ShowCaption = False
         ShowHint = True
         ParentShowHint = False
+        OnClick = removeButtonClick
       end
     end
   end
@@ -1280,8 +1279,8 @@ object Form1: TForm1
   end
   object membershipCostPlanContextMenu: TPopupMenu
     Images = popupIcons
-    Left = 360
-    Top = 464
+    Left = 372
+    Top = 568
     object MenuItem13: TMenuItem
       Caption = 'Neuer Beitragssatz ...'
       ImageIndex = 0
