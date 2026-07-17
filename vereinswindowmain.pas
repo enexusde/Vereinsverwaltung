@@ -6,7 +6,18 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, ExtCtrls, MD5,
-  Windows, CryptoUnit,
+  CryptoUnit, fileinfo,
+  {$IFDEF WINDOWS}
+  winpeimagereader,
+  {$ENDIF}
+  {$IFDEF DARWIN}
+  machoreader,
+  {$ENDIF}
+  {$IFDEF UNIX}
+  {$IFNDEF DARWIN}
+  elfreader,
+  {$ENDIF}
+  {$ENDIF}
   StdCtrls, Buttons, Menus, uuid, beitragssatzaenderung, DateUtils, Contnrs, math;
 
 const
@@ -161,6 +172,7 @@ type
     procedure statisticGraphClick(Sender: TObject);
     procedure statisticGraphPaint(Sender: TObject);
     procedure updateMemberForm(Sender: TObject; Item: TListItem; Selected: boolean);
+    procedure membersMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure MenuItem13Click(Sender: TObject);
   private
 
@@ -233,30 +245,20 @@ implementation
 
 function GetAppVersion: string;
 var
-  Size, Handle: DWORD;
-  Buffer: Pointer;
-  FixedPtr: PVSFixedFileInfo;
-  FixedSize: UINT;
+  FileVerInfo: TFileVersionInfo;
 begin
   Result := '';
-  Size := GetFileVersionInfoSize(PChar(ParamStr(0)), Handle);
-  if Size = 0 then Exit;
-
-  GetMem(Buffer, Size);
+  FileVerInfo := TFileVersionInfo.Create(nil);
   try
-    if GetFileVersionInfo(PChar(ParamStr(0)), Handle, Size, Buffer) then
-    begin
-      if VerQueryValue(Buffer, '\', Pointer(FixedPtr), FixedSize) then
-      begin
-        Result :=
-          IntToStr(HiWord(FixedPtr^.dwFileVersionMS)) + '.' +
-          IntToStr(LoWord(FixedPtr^.dwFileVersionMS)) + '.' +
-          IntToStr(HiWord(FixedPtr^.dwFileVersionLS)) + '.' +
-          IntToStr(LoWord(FixedPtr^.dwFileVersionLS));
-      end;
+    FileVerInfo.FileName := ParamStr(0);
+    try
+      FileVerInfo.ReadFileInfo;
+      Result := FileVerInfo.VersionStrings.Values['FileVersion'];
+    except
+      // Keine Versionsressource in der ausfuehrbaren Datei gefunden.
     end;
   finally
-    FreeMem(Buffer);
+    FileVerInfo.Free;
   end;
 end;
 
@@ -1433,6 +1435,7 @@ var
   newItem: PItem;
   since: string;
 begin
+  since := DateToStr(Date);
   repeat
     if not DefaultInputDialog('Mitglied seit', 'Wann war der erste Tag der Mitgliedschaft?' + LineEnding  + 'Es werden nur volle Monate berechnet,' +
       LineEnding  + 'es wird also automatisch der erste' + LineEnding  + 'des Monats genommen.', False, since) then
@@ -1847,6 +1850,14 @@ begin
   recalculateToolbarButtons;
 end;
 
+procedure TForm1.membersMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+  // Unter Windows hebt ein Klick auf eine leere Stelle der Liste die Auswahl
+  // automatisch auf, unter GTK2 (Linux) nicht. Das Verhalten hier plattform-
+  // unabhaengig nachbilden.
+  if members.GetItemAt(X, Y) = nil then
+    members.ItemIndex := -1;
+end;
 
 procedure TForm1.planListSelectItem(Sender: TObject; Item: TListItem; Selected: boolean);
 var
