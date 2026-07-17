@@ -9,7 +9,7 @@
 ![Top Language](https://img.shields.io/github/languages/top/enexusde/Vereinsverwaltung)
 ![FreePascal](https://img.shields.io/badge/FreePascal-FPC-red)
 ![Lazarus](https://img.shields.io/badge/Lazarus-IDE-blue)
-![Platform](https://img.shields.io/badge/platform-Windows-lightgrey)
+![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux-lightgrey)
 
 # Vereinsverwaltung
 Ein Lazarus-Projekt für die Verwaltung von Vereinen
@@ -18,8 +18,31 @@ Ein Lazarus-Projekt für die Verwaltung von Vereinen
 
 [▼ Vereinsverwaltung.exe (Windows-Download)](https://github.com/enexusde/Vereinsverwaltung/releases/latest/)
 
+# Linux
 
+Unter Windows wird libsodium als eingebettete DLL mitgeliefert. Unter Linux
+wird stattdessen die vom System bereitgestellte libsodium zur Laufzeit
+nachgeladen, daher wird folgendes Laufzeit-Paket benötigt:
 
+```sh
+# Debian/Ubuntu
+sudo apt install libsodium23
+
+# Fedora
+sudo dnf install libsodium
+
+# Arch
+sudo pacman -S libsodium
+```
+
+## Selbst bauen
+
+Voraussetzungen: Lazarus/FPC (Paket `lazarus`) sowie `libsodium23`.
+
+```sh
+lazbuild Vereinsverwaltung.lpi
+./Vereinsverwaltung
+```
 
 # Beispiel Mitglied
 
