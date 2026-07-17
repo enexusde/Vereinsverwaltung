@@ -53,44 +53,32 @@ var
 implementation
 
 uses
-  Windows, Classes, SysUtils;
+  Windows, Classes, SysUtils, MemoryModule;
 
 var
-  LibHandle: HMODULE = 0;
-  TempDLLPath: string;
-
-procedure ExtractDLL(const ResName, FileName: string);
-var
-  RS: TResourceStream;
-begin
-  RS := TResourceStream.Create(HInstance, ResName, RT_RCDATA);
-  try
-    RS.SaveToFile(FileName);
-  finally
-    RS.Free;
-  end;
-end;
+  LibHandle: TMemoryModule = nil;
 
 procedure LoadProc(var P: Pointer; const Name: PChar);
 begin
-  P := GetProcAddress(LibHandle, Name);
+  P := MemoryGetProcAddress(LibHandle, PAnsiChar(Name));
   if P = nil then
     raise Exception.Create('libsodium: Funktion nicht gefunden: ' + Name);
 end;
 
 procedure InitSodium;
 var
-  TempDir: string;
+  RS: TResourceStream;
 begin
-  TempDir := GetTempDir;
-  TempDLLPath := TempDir + 'libsodium_' + IntToStr(GetCurrentProcessId) + '.dll';
+  // libsodium.dll steckt als Ressource im Exe und wird direkt aus dem
+  // Speicher geladen, ohne sie vorher auf die Platte zu schreiben.
+  RS := TResourceStream.Create(HInstance, 'LIBSODIUM', RT_RCDATA);
+  try
+    LibHandle := MemoryLoadLibary(RS.Memory);
+  finally
+    RS.Free;
+  end;
 
-  // DLL extrahieren
-  ExtractDLL('LIBSODIUM', TempDLLPath);
-
-  // DLL laden
-  LibHandle := LoadLibrary(PChar(TempDLLPath));
-  if LibHandle = 0 then
+  if LibHandle = nil then
     raise Exception.Create('libsodium.dll konnte nicht geladen werden');
 
   // Funktionen binden
@@ -109,19 +97,10 @@ end;
 
 procedure CleanupSodium;
 begin
-  if LibHandle <> 0 then
+  if LibHandle <> nil then
   begin
-    FreeLibrary(LibHandle);
-    LibHandle := 0;
-  end;
-
-  if (TempDLLPath <> '') and FileExists(TempDLLPath) then
-  begin
-    try
-      DeleteFile(TempDLLPath);
-    except
-      // optional ignorieren (Datei evtl. noch gelockt)
-    end;
+    MemoryFreeLibrary(LibHandle);
+    LibHandle := nil;
   end;
 end;
 
